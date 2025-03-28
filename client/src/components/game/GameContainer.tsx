@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ClickButton from './ClickButton';
 import UpgradeItem from './UpgradeItem';
 import RebirthCard from './RebirthCard';
@@ -12,18 +12,36 @@ interface GameContainerProps {
 }
 
 export default function GameContainer({ onShowCredits, onShowPrivacy }: GameContainerProps) {
-  const { saveGame, loadGame, updatePlayTime, gameState } = useGame();
+  const { saveGame, loadGame, gameState } = useGame();
   const [playTime, setPlayTime] = useState('00:00:00');
   const [leaderboardSubmitted, setLeaderboardSubmitted] = useState(false);
+  
+  // Create a local updatePlayTime function
+  const calculatePlayTime = useCallback(() => {
+    if (!gameState) return '00:00:00';
+    
+    const now = new Date();
+    const elapsedTime = new Date(now.getTime() - gameState.startTime.getTime());
+    
+    // Adjust for UTC
+    const hours = elapsedTime.getUTCHours();
+    const minutes = elapsedTime.getUTCMinutes();
+    const seconds = elapsedTime.getUTCSeconds();
+    
+    // Format as HH:MM:SS
+    return String(hours).padStart(2, '0') + ':' +
+           String(minutes).padStart(2, '0') + ':' +
+           String(seconds).padStart(2, '0');
+  }, [gameState]);
   
   // Update play time every second
   useEffect(() => {
     const timer = setInterval(() => {
-      setPlayTime(updatePlayTime());
+      setPlayTime(calculatePlayTime());
     }, 1000);
     
     return () => clearInterval(timer);
-  }, [updatePlayTime]);
+  }, [calculatePlayTime]);
   
   const handleSaveGame = (e: React.MouseEvent) => {
     e.preventDefault();
