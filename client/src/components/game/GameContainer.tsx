@@ -47,6 +47,18 @@ export default function GameContainer({ onShowCredits, onShowPrivacy }: GameCont
     }
   };
   
+  // If gameState is not defined yet, show a loading state
+  if (!gameState) {
+    return (
+      <div className="main-content relative flex flex-col items-center justify-center w-full h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-indigo-600 mb-4">Loading Game...</h2>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="main-content relative flex flex-col items-center justify-center w-full">
       <div className="game-container relative w-full max-w-4xl mx-auto px-4 py-6 flex flex-col items-center gap-6">
