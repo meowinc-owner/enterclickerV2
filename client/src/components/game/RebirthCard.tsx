@@ -6,24 +6,6 @@ export default function RebirthCard() {
   const { gameState, rebirth, formatNumber } = useGame();
   const [showConfirm, setShowConfirm] = useState(false);
   
-  // Handle case where gameState might be undefined
-  if (!gameState) {
-    return (
-      <div className="rebirth-card bg-white/90 backdrop-blur-md rounded-2xl game-radius shadow-card p-5 transition-all duration-300 hover:shadow-card-hover relative overflow-hidden">
-        <div className="animate-pulse">
-          <div className="h-6 w-40 bg-gray-200 rounded mb-3"></div>
-          <div className="h-16 bg-gray-200 rounded mb-4"></div>
-          <div className="space-y-2 mb-4">
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded"></div>
-          </div>
-          <div className="h-10 w-32 bg-gray-200 rounded mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
-  
   const rebirthCost = calculateRebirthCost(gameState.rebirthLevel);
   const canRebirth = gameState.count >= rebirthCost;
   

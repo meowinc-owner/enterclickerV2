@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import ClickButton from './ClickButton';
 import UpgradeItem from './UpgradeItem';
 import RebirthCard from './RebirthCard';
@@ -12,36 +12,18 @@ interface GameContainerProps {
 }
 
 export default function GameContainer({ onShowCredits, onShowPrivacy }: GameContainerProps) {
-  const { saveGame, loadGame, gameState } = useGame();
+  const { saveGame, loadGame, updatePlayTime, gameState } = useGame();
   const [playTime, setPlayTime] = useState('00:00:00');
   const [leaderboardSubmitted, setLeaderboardSubmitted] = useState(false);
-  
-  // Create a local updatePlayTime function
-  const calculatePlayTime = useCallback(() => {
-    if (!gameState) return '00:00:00';
-    
-    const now = new Date();
-    const elapsedTime = new Date(now.getTime() - gameState.startTime.getTime());
-    
-    // Adjust for UTC
-    const hours = elapsedTime.getUTCHours();
-    const minutes = elapsedTime.getUTCMinutes();
-    const seconds = elapsedTime.getUTCSeconds();
-    
-    // Format as HH:MM:SS
-    return String(hours).padStart(2, '0') + ':' +
-           String(minutes).padStart(2, '0') + ':' +
-           String(seconds).padStart(2, '0');
-  }, [gameState]);
   
   // Update play time every second
   useEffect(() => {
     const timer = setInterval(() => {
-      setPlayTime(calculatePlayTime());
+      setPlayTime(updatePlayTime());
     }, 1000);
     
     return () => clearInterval(timer);
-  }, [calculatePlayTime]);
+  }, [updatePlayTime]);
   
   const handleSaveGame = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -64,18 +46,6 @@ export default function GameContainer({ onShowCredits, onShowPrivacy }: GameCont
       }, 3000);
     }
   };
-  
-  // If gameState is not defined yet, show a loading state
-  if (!gameState) {
-    return (
-      <div className="main-content relative flex flex-col items-center justify-center w-full h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-indigo-600 mb-4">Loading Game...</h2>
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
   
   return (
     <div className="main-content relative flex flex-col items-center justify-center w-full">

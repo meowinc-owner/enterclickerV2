@@ -3,15 +3,6 @@ import { GameState, ThemeMode, Upgrade, CustomThemeSettings } from '../types/gam
 import { formatNumber } from '../utils/gameUtils';
 import { applyThemeStyles } from '../utils/themeUtils';
 
-// Storage keys
-const STORAGE_KEYS = {
-  COOKIES_ACCEPTED: 'enterClicker_cookiesAccepted',
-  GAME_DATA: 'enterClicker_gameData',
-  THEME: 'enterClicker_theme',
-  CUSTOM_THEME: 'enterClicker_customTheme',
-  AUTO_SAVE_INTERVAL: 'enterClicker_autoSaveInterval'
-};
-
 interface GameContextProps {
   gameState: GameState;
   incrementCount: () => void;
@@ -21,6 +12,7 @@ interface GameContextProps {
   saveGame: () => void;
   loadGame: () => void;
   formatNumber: (num: number) => string;
+  updatePlayTime: () => string;
   themeMode: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
   cookiesAccepted: boolean;
@@ -30,8 +22,6 @@ interface GameContextProps {
   applyCustomTheme: (settings: CustomThemeSettings) => void;
   customThemeSettings: CustomThemeSettings;
   saveThemePreference: (theme: ThemeMode) => void;
-  // Keep this for backwards compatibility
-  updatePlayTime: () => string;
 }
 
 const defaultCustomTheme: CustomThemeSettings = {
@@ -117,70 +107,26 @@ const defaultGameState: GameState = {
 export const GameContext = createContext<GameContextProps>({} as GameContextProps);
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-  const [gameState, setGameState] = useState<GameState | null>(null);
+  const [gameState, setGameState] = useState<GameState>(defaultGameState);
   const [themeMode, setThemeMode] = useState<ThemeMode>('light');
   const [cookiesAccepted, setCookiesAccepted] = useState<boolean>(false);
   const [customThemeSettings, setCustomThemeSettings] = useState<CustomThemeSettings>(defaultCustomTheme);
   const [lastSaveTime, setLastSaveTime] = useState<Date>(new Date());
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   // Initialize game and check for cookies on first render
   useEffect(() => {
-    const cookieState = localStorage.getItem(STORAGE_KEYS.COOKIES_ACCEPTED);
-    
+    const cookieState = localStorage.getItem('cookiesAccepted');
     if (cookieState === 'true') {
       setCookiesAccepted(true);
-      loadGameFromStorage();
-    } else {
-      setGameState(defaultGameState);
-    }
-    
-    setIsInitialized(true);
-  }, []);
-
-  // Load game from localStorage
-  const loadGameFromStorage = useCallback(() => {
-    try {
-      // Load game data
-      const savedData = localStorage.getItem(STORAGE_KEYS.GAME_DATA);
-      if (savedData) {
-        const parsedData = JSON.parse(savedData);
-        // Convert the ISO string back to a Date object
-        const startTime = new Date(parsedData.startTime || new Date());
-        setGameState({
-          ...parsedData,
-          startTime
-        });
-      } else {
-        setGameState(defaultGameState);
-      }
-      
-      // Load theme preferences
-      const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
-      if (savedTheme) {
-        setThemeMode(savedTheme as ThemeMode);
-      }
-      
-      // Load custom theme settings
-      const savedCustomTheme = localStorage.getItem(STORAGE_KEYS.CUSTOM_THEME);
-      if (savedCustomTheme) {
-        setCustomThemeSettings(JSON.parse(savedCustomTheme));
-      }
-    } catch (error) {
-      console.error("Error loading saved data:", error);
-      setGameState(defaultGameState);
+      loadGame();
     }
   }, []);
 
-  // Set up game loop for auto-clickers and auto-save
+  // Set up game loop for auto-clickers
   useEffect(() => {
-    if (!gameState) return;
-    
     const gameInterval = setInterval(() => {
       if (gameState.pointsPerSecond > 0) {
         setGameState(prevState => {
-          if (!prevState) return prevState;
-          
           const pointsEarned = prevState.pointsPerSecond * prevState.pointMultiplier * (1 + prevState.rebirthBonus / 100);
           return {
             ...prevState,
@@ -192,14 +138,14 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 
       // Auto-save every minute
       const now = new Date();
-      if (cookiesAccepted && now.getTime() - lastSaveTime.getTime() > 60000) {
-        saveGameToStorage();
+      if (now.getTime() - lastSaveTime.getTime() > 60000) {
+        saveGame();
         setLastSaveTime(now);
       }
     }, 1000);
 
     return () => clearInterval(gameInterval);
-  }, [gameState, cookiesAccepted, lastSaveTime]);
+  }, [gameState.pointsPerSecond, gameState.pointMultiplier, gameState.rebirthBonus, lastSaveTime]);
 
   // Apply theme styles when theme changes
   useEffect(() => {
@@ -215,34 +161,10 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         document.body.classList.add('bg-gradient-to-br', 'from-neutral-900', 'to-neutral-800');
       }
     }
-    
-    // Save theme preference if cookies are accepted
-    if (cookiesAccepted) {
-      localStorage.setItem(STORAGE_KEYS.THEME, themeMode);
-    }
-  }, [themeMode, customThemeSettings, cookiesAccepted]);
-
-  // Save current game state to localStorage
-  const saveGameToStorage = useCallback(() => {
-    if (!cookiesAccepted || !gameState) return;
-    
-    try {
-      const gameData = {
-        ...gameState,
-        startTime: gameState.startTime.toISOString()
-      };
-      
-      localStorage.setItem(STORAGE_KEYS.GAME_DATA, JSON.stringify(gameData));
-      setLastSaveTime(new Date());
-    } catch (error) {
-      console.error("Error saving game data:", error);
-    }
-  }, [gameState, cookiesAccepted]);
+  }, [themeMode, customThemeSettings]);
 
   const incrementCount = useCallback(() => {
     setGameState(prevState => {
-      if (!prevState) return prevState;
-      
       const pointsEarned = prevState.pointsPerClick * prevState.pointMultiplier * (1 + prevState.rebirthBonus / 100);
       return {
         ...prevState,
@@ -255,8 +177,6 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 
   const purchaseUpgrade = useCallback((upgradeId: string) => {
     setGameState(prevState => {
-      if (!prevState) return prevState;
-      
       const upgrade = prevState.upgrades[upgradeId];
       
       if (!upgrade || prevState.count < upgrade.currentPrice) {
@@ -292,7 +212,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       const newLevel = upgrade.level + 1;
       const newPrice = Math.round(upgrade.currentPrice * 1.15);
       
-      const updatedState = {
+      return {
         ...prevState,
         count: prevState.count - upgrade.currentPrice,
         pointsPerClick: newPointsPerClick,
@@ -308,20 +228,11 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
           }
         }
       };
-      
-      // Auto-save after purchasing an upgrade if cookies are accepted
-      if (cookiesAccepted) {
-        setTimeout(() => saveGameToStorage(), 100);
-      }
-      
-      return updatedState;
     });
-  }, [cookiesAccepted, saveGameToStorage]);
+  }, []);
 
   const rebirth = useCallback(() => {
     setGameState(prevState => {
-      if (!prevState) return prevState;
-      
       const rebirthCost = 1000 * Math.pow(10, prevState.rebirthLevel);
       
       if (prevState.count < rebirthCost) {
@@ -343,7 +254,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         };
       });
       
-      const updatedState = {
+      return {
         ...prevState,
         count: 0,
         pointsPerClick: 1,
@@ -353,18 +264,11 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         rebirthBonus: newRebirthBonus,
         upgrades: resetUpgrades
       };
-      
-      // Auto-save after rebirth if cookies are accepted
-      if (cookiesAccepted) {
-        setTimeout(() => saveGameToStorage(), 100);
-      }
-      
-      return updatedState;
     });
-  }, [cookiesAccepted, saveGameToStorage]);
+  }, []);
 
   const submitScore = useCallback(async (playerName: string): Promise<boolean> => {
-    if (!playerName.trim() || !cookiesAccepted || !gameState) {
+    if (!playerName.trim() || !cookiesAccepted) {
       return false;
     }
     
@@ -385,105 +289,51 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error submitting score:", error);
       return false;
     }
-  }, [gameState, cookiesAccepted]);
+  }, [gameState.count, gameState.rebirthLevel, gameState.totalPointsEarned, cookiesAccepted]);
 
   const saveGame = useCallback(() => {
-    saveGameToStorage();
-    return true;
-  }, [saveGameToStorage]);
-
-  const loadGame = useCallback(() => {
-    loadGameFromStorage();
-    return true;
-  }, [loadGameFromStorage]);
-
-  const acceptCookies = useCallback(() => {
-    setCookiesAccepted(true);
-    localStorage.setItem(STORAGE_KEYS.COOKIES_ACCEPTED, 'true');
+    if (!cookiesAccepted) return;
     
-    // Save current game state after accepting cookies
-    setTimeout(() => saveGameToStorage(), 100);
-  }, [saveGameToStorage]);
-
-  const declineCookies = useCallback(() => {
-    setCookiesAccepted(false);
-    localStorage.setItem(STORAGE_KEYS.COOKIES_ACCEPTED, 'false');
-    
-    // Clear any existing saved data
-    Object.values(STORAGE_KEYS).forEach(key => {
-      if (key !== STORAGE_KEYS.COOKIES_ACCEPTED) {
-        localStorage.removeItem(key);
-      }
-    });
-  }, []);
-
-  const resetGame = useCallback(() => {
-    setGameState(defaultGameState);
-    
-    if (cookiesAccepted) {
-      setTimeout(() => saveGameToStorage(), 100);
-    }
-  }, [cookiesAccepted, saveGameToStorage]);
-
-  const setTheme = useCallback((theme: ThemeMode) => {
-    setThemeMode(theme);
-    
-    if (cookiesAccepted) {
-      localStorage.setItem(STORAGE_KEYS.THEME, theme);
-    }
-  }, [cookiesAccepted]);
-
-  const saveThemePreference = useCallback((theme: ThemeMode) => {
-    if (cookiesAccepted) {
-      localStorage.setItem(STORAGE_KEYS.THEME, theme);
-    }
-  }, [cookiesAccepted]);
-
-  const applyCustomTheme = useCallback((settings: CustomThemeSettings) => {
-    setCustomThemeSettings(settings);
-    setThemeMode('custom-theme');
-    
-    if (cookiesAccepted) {
-      localStorage.setItem(STORAGE_KEYS.CUSTOM_THEME, JSON.stringify(settings));
-      localStorage.setItem(STORAGE_KEYS.THEME, 'custom-theme');
-    }
-  }, [cookiesAccepted]);
-
-  // If we're still initializing, return a provider with default values
-  if (!isInitialized || !gameState) {
-    // Create a placeholder context with non-functional methods
-    const placeholderContext: GameContextProps = {
-      gameState: defaultGameState,
-      incrementCount: () => {},
-      purchaseUpgrade: () => {},
-      rebirth: () => {},
-      submitScore: async () => false,
-      saveGame: () => {},
-      loadGame: () => {},
-      formatNumber: (n) => n.toString(),
-      updatePlayTime: () => '00:00:00',
-      themeMode: 'light',
-      setTheme: () => {},
-      cookiesAccepted: false,
-      acceptCookies: () => {},
-      declineCookies: () => {},
-      resetGame: () => {},
-      applyCustomTheme: () => {},
-      customThemeSettings: defaultCustomTheme,
-      saveThemePreference: () => {}
+    const gameData = {
+      ...gameState,
+      startTime: gameState.startTime.toISOString()
     };
     
-    return (
-      <GameContext.Provider value={placeholderContext}>
-        {children}
-      </GameContext.Provider>
-    );
-  }
+    localStorage.setItem('enterClickerGameData', JSON.stringify(gameData));
+    setLastSaveTime(new Date());
+  }, [gameState, cookiesAccepted]);
 
-  // For backward compatibility - calculates and returns the play time
-  const updatePlayTime = useCallback(() => {
-    if (!gameState) return '00:00:00';
+  const loadGame = useCallback(() => {
+    const savedData = localStorage.getItem('enterClickerGameData');
     
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        
+        // Convert the ISO string back to a Date object
+        const startTime = new Date(parsedData.startTime || new Date());
+        
+        setGameState({
+          ...parsedData,
+          startTime
+        });
+      } catch (error) {
+        console.error("Error parsing saved game data:", error);
+      }
+    }
+    
+    // Load custom theme if it exists
+    const savedCustomTheme = localStorage.getItem('enterClickerCustomTheme');
+    if (savedCustomTheme) {
+      try {
+        setCustomThemeSettings(JSON.parse(savedCustomTheme));
+      } catch (error) {
+        console.error("Error parsing saved theme data:", error);
+      }
+    }
+  }, []);
+
+  const updatePlayTime = useCallback(() => {
     const now = new Date();
     const elapsedTime = new Date(now.getTime() - gameState.startTime.getTime());
     
@@ -496,7 +346,45 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     return String(hours).padStart(2, '0') + ':' +
            String(minutes).padStart(2, '0') + ':' +
            String(seconds).padStart(2, '0');
-  }, [gameState]);
+  }, [gameState.startTime]);
+
+  const acceptCookies = useCallback(() => {
+    setCookiesAccepted(true);
+    localStorage.setItem('cookiesAccepted', 'true');
+    saveGame();
+  }, [saveGame]);
+
+  const declineCookies = useCallback(() => {
+    setCookiesAccepted(false);
+    localStorage.setItem('cookiesAccepted', 'false');
+  }, []);
+
+  const resetGame = useCallback(() => {
+    setGameState(defaultGameState);
+    if (cookiesAccepted) {
+      saveGame();
+    }
+  }, [cookiesAccepted, saveGame]);
+
+  const setTheme = useCallback((theme: ThemeMode) => {
+    setThemeMode(theme);
+  }, []);
+
+  const saveThemePreference = useCallback((theme: ThemeMode) => {
+    if (cookiesAccepted) {
+      localStorage.setItem('enterClickerTheme', theme);
+    }
+  }, [cookiesAccepted]);
+
+  const applyCustomTheme = useCallback((settings: CustomThemeSettings) => {
+    setCustomThemeSettings(settings);
+    setThemeMode('custom-theme');
+    
+    if (cookiesAccepted) {
+      localStorage.setItem('enterClickerCustomTheme', JSON.stringify(settings));
+      localStorage.setItem('enterClickerTheme', 'custom-theme');
+    }
+  }, [cookiesAccepted]);
 
   return (
     <GameContext.Provider
@@ -509,6 +397,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         saveGame,
         loadGame,
         formatNumber,
+        updatePlayTime,
         themeMode,
         setTheme,
         cookiesAccepted,
@@ -517,8 +406,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         resetGame,
         applyCustomTheme,
         customThemeSettings,
-        saveThemePreference,
-        updatePlayTime
+        saveThemePreference
       }}
     >
       {children}

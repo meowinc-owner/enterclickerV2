@@ -7,22 +7,8 @@ interface LeaderboardCardProps {
 }
 
 export default function LeaderboardCard({ onSubmitSuccess, submitted }: LeaderboardCardProps) {
-  const { submitScore, cookiesAccepted, gameState } = useGame();
+  const { submitScore, cookiesAccepted } = useGame();
   const [playerName, setPlayerName] = useState('');
-  
-  // Handle case where gameState might be undefined
-  if (!gameState) {
-    return (
-      <div className="leaderboard-card bg-white/90 backdrop-blur-md rounded-2xl game-radius shadow-card p-5 transition-all duration-300 hover:shadow-card-hover relative overflow-hidden">
-        <div className="animate-pulse">
-          <div className="h-6 w-40 bg-gray-200 rounded mb-3"></div>
-          <div className="h-12 bg-gray-200 rounded mb-4"></div>
-          <div className="h-10 bg-gray-200 rounded mb-3"></div>
-          <div className="h-10 bg-gray-200 rounded"></div>
-        </div>
-      </div>
-    );
-  }
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
