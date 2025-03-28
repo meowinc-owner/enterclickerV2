@@ -1,0 +1,3134 @@
+Can you revamp my UIs and make them look a lot better but different? Make it look, feel, and seem differen by creating a different style. INCLUDE FULL HTML CODE AND ALL CSS STYLES.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Clicker! - by Damian B (meowinc)</title>
+    <link rel="icon" type="image/x-icon" href="https://meowinc-owner.github.io/enterclicker/favicon.ico">
+
+    <!-- Firebase App (required for Firebase services) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyDRZjJpvd9TvP7aNaXnHvAKwbycn-O1VW4",
+          authDomain: "enterclickerleaderboard.firebaseapp.com",
+          projectId: "enterclickerleaderboard",
+          storageBucket: "enterclickerleaderboard.appspot.com",
+          messagingSenderId: "339564023566",
+          appId: "1:339564023566:web:bacf4857486349c240515f",
+          measurementId: "G-VZ3YBCEKYW"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Expose Firebase variables to the global scope for debugging
+        window.firebaseApp = app;
+        window.firebaseDb = db;
+        window.firebaseFirestore = { collection, addDoc, serverTimestamp }; // Expose Firestore functions
+
+        console.log("Firebase initialized:", app); // Debugging
+    </script>
+
+    <style>
+        /* Disable text selection */
+        body {
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
+        }
+
+        /* Your provided CSS */
+        html, body {
+            overflow: hidden;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        :root {
+            --bg-color: #f5f5f5;
+            --container-bg: white;
+            --text-color: #333;
+            --secondary-text: #666;
+            --tertiary-text: #757575;
+            --border-color: #e0e0e0;
+            --stats-border: #eee;
+            --credit-bg: #f9f9f9;
+            --warning-bg: #ffebee;
+            --warning-border: #f44336;
+            --warning-text: #c62828;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --rebirth-color: #673AB7;
+            --rebirth-hover: #5E35B1;
+            --cooldown-overlay: rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --container-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --secondary-text: #b0b0b0;
+            --tertiary-text: #909090;
+            --border-color: #333;
+            --stats-border: #333;
+            --credit-bg: #2a2a2a;
+            --warning-bg: #3a1c1c;
+            --warning-border: #912923;
+            --warning-text: #ff6b6b;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --rebirth-color: #9575CD;
+            --rebirth-hover: #7E57C2;
+            --cooldown-overlay: rgba(0, 0, 0, 0.7);
+        }
+
+        /* Rainbow Light Theme */
+        body.rainbow-light-mode {
+            --container-bg: rgba(255, 255, 255, 0.9);
+            --text-color: #000;
+            --secondary-text: #555;
+            --tertiary-text: #777;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --stats-border: rgba(0, 0, 0, 0.1);
+            --credit-bg: rgba(255, 255, 255, 0.8);
+            --warning-bg: rgba(255, 235, 238, 0.9);
+            --warning-border: #f44336;
+            --warning-text: #c62828;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --rebirth-color: #673AB7;
+            --rebirth-hover: #5E35B1;
+            --cooldown-overlay: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Rainbow Dark Theme */
+        body.rainbow-dark-mode {
+            --container-bg: rgba(30, 30, 30, 0.9);
+            --text-color: #e0e0e0;
+            --secondary-text: #b0b0b0;
+            --tertiary-text: #909090;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --stats-border: rgba(255, 255, 255, 0.1);
+            --credit-bg: rgba(30, 30, 30, 0.8);
+            --warning-bg: rgba(58, 28, 28, 0.9);
+            --warning-border: #912923;
+            --warning-text: #ff6b6b;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --rebirth-color: #9575CD;
+            --rebirth-hover: #7E57C2;
+            --cooldown-overlay: rgba(0, 0, 0, 0.7);
+        }
+
+        /* Custom Theme */
+        body.custom-theme {
+            --bg-color: #f5f5f5;
+            --container-bg: white;
+            --text-color: #333;
+            --secondary-text: #666;
+            --tertiary-text: #757575;
+            --border-color: #e0e0e0;
+            --stats-border: #eee;
+            --credit-bg: #f9f9f9;
+            --warning-bg: #ffebee;
+            --warning-border: #f44336;
+            --warning-text: #c62828;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --rebirth-color: #673AB7;
+            --rebirth-hover: #5E35B1;
+            --cooldown-overlay: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Rainbow animation */
+        @keyframes rainbowBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Rainbow Light Background */
+        body.rainbow-light-mode {
+            background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee, #fbc2eb, #ff9a9e);
+            background-size: 400% 400%;
+            animation: rainbowBackground 10s ease infinite;
+        }
+
+        /* Rainbow Dark Background */
+        body.rainbow-dark-mode {
+            background: linear-gradient(270deg, #673AB7, #5E35B1, #512DA8, #4527A0, #512DA8, #673AB7);
+            background-size: 400% 400%;
+            animation: rainbowBackground 10s ease infinite;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-color);
+            flex-direction: column;
+            position: relative;
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            padding-bottom: 70px; /* Space for cookie banner */
+        }
+        
+        .theme-menu {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 100;
+        }
+        
+        .theme-button {
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+        
+        .theme-button:hover {
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+        
+        .theme-button .icon {
+            margin-right: 5px;
+            font-size: 1rem;
+        }
+        
+        /* New Theme Menu Styles */
+        .theme-menu-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            padding: 20px;
+            width: 300px;
+            max-width: 90%;
+            z-index: 1001;
+        }
+
+        .theme-menu-panel.show {
+            display: block;
+        }
+
+        .theme-menu-panel h2 {
+            margin-top: 0;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .theme-menu-panel .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .theme-menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .theme-menu-buttons button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-menu-buttons button:hover {
+            background-color: var(--stats-border);
+            transform: translateY(-2px);
+        }
+
+        /* Custom Theme Panel */
+        .custom-theme-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            z-index: 1001;
+        }
+
+        .custom-theme-panel.show {
+            display: block;
+        }
+
+        .custom-theme-panel h2 {
+            margin-top: 0;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .custom-theme-panel .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .custom-theme-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .custom-theme-control {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .custom-theme-control label {
+            margin-bottom: 5px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .custom-theme-control input[type="color"],
+        .custom-theme-control input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .custom-theme-control input[type="range"] {
+            -webkit-appearance: none;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .custom-theme-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--rebirth-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .custom-theme-presets {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .custom-theme-preset {
+            padding: 8px 12px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            flex-grow: 1;
+            text-align: center;
+            background-color: var(--stats-border);
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+
+        .custom-theme-preset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+
+        .custom-theme-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .custom-theme-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .custom-theme-btn.apply {
+            background-color: var(--rebirth-color);
+            color: white;
+        }
+
+        .custom-theme-btn.reset {
+            background-color: var(--warning-border);
+            color: white;
+        }
+
+        .custom-theme-btn.save {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .custom-theme-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+       .credit-box {
+            font-size: 0.75rem;
+            color: var(--tertiary-text);
+            background-color: transparent; /* Make background transparent */
+            padding: 3px 6px; /* Keep padding if needed */
+            border-radius: 3px; /* Keep border-radius if needed */
+            border: none; /* Remove the border if any */
+            margin-bottom: 15px;
+            font-weight: bold; /* Make text bold */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); /* Add shadow for readability */
+            transition: all 0.3s ease;
+        }
+        
+        /* Add a specific styling for dark mode if needed */
+        body.dark-mode .credit-box {
+            color: var(--text-color); /* High contrast color in dark mode */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); /* Ensures text is readable against dark background */
+        }
+        
+        .trademark {
+            font-size: 0.6rem;
+            vertical-align: super;
+        }
+        
+        .game-container {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 10px;
+            background-color: var(--container-bg);
+            box-shadow: 0 4px 8px var(--shadow-color);
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            min-height: 400px;
+            transition: all 0.3s ease;
+        }
+        
+        .counter {
+            font-size: 5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin: 1rem 0;
+            transition: color 0.3s ease;
+        }
+        
+        .instructions {
+            color: var(--secondary-text);
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+        
+        .button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+            transition: background-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cooldown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--cooldown-overlay);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            transition: width 0.1s linear;
+        }
+        
+        .button-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .reset-button {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .reset-button:hover {
+            background-color: #d32f2f;
+        }
+        
+        .upgrade-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .upgrade-button:hover {
+            background-color: #388E3C;
+        }
+        
+        .upgrade-button:disabled {
+            background-color: #9E9E9E;
+            cursor: not-allowed;
+        }
+        
+        .rebirth-button {
+            background-color: var(--rebirth-color);
+            color: white;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .rebirth-button:hover {
+            background-color: var(--rebirth-hover);
+        }
+        
+        .rebirth-button:disabled {
+            background-color: #9E9E9E;
+            cursor: not-allowed;
+        }
+        
+        .stats {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--stats-border);
+            text-align: left;
+            width: 100%;
+            transition: border-color 0.3s ease;
+        }
+        
+        .multiplier {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .rebirth-stat {
+            font-weight: bold;
+            color: var(--rebirth-color);
+        }
+        
+        .enter-button {
+            background-color: #2196F3;
+            color: white;
+            font-size: 1.5rem;
+            padding: 1rem 2rem;
+            margin: 2rem auto;
+            display: block;
+            transition: transform 0.1s, background-color 0.3s ease;
+        }
+        
+        .enter-button:hover {
+            background-color: #1976D2;
+        }
+        
+        .enter-button:active {
+            transform: scale(0.95);
+        }
+        
+        .enter-button span {
+            font-size: 0.8rem;
+            display: block;
+            margin-top: 0.5rem;
+        }
+        
+        .warning-box {
+            margin-top: 20px;
+            background-color: var(--warning-bg);
+            border: 2px solid var(--warning-border);
+            border-radius: 5px;
+            padding: 10px 15px;
+            color: var(--warning-text);
+            font-weight: bold;
+            width: 600px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .save-message {
+            font-size: 0.8rem;
+            color: var(--tertiary-text);
+            margin-top: 5px;
+            font-style: italic;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 300px;
+            transition: color 0.3s ease;
+        }
+        
+        .cookie-consent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(51, 51, 51, 0.9);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .cookie-text {
+            margin-right: 20px;
+        }
+        
+        .cookie-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .cookie-button:hover {
+            background-color: #388E3C;
+        }
+
+        .rate-limiter {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 0.8rem;
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .rebirth-info {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: var(--container-bg); /* Solid background that matches theme */
+            border-radius: 5px;
+            font-size: 0.9rem;
+            text-align: left;
+            border: 2px solid var(--text-color); /* Border color changes with theme */
+            position: absolute;
+            bottom: 120px;
+            right: 20px;
+            width: 250px;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .rebirth-button:hover + .rebirth-info {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 600px) {
+            .theme-menu {
+                position: static; /* Change to static for mobile */
+                margin-bottom: 10px; /* Add some space */
+            }
+
+            .main-content {
+                padding: 10px; /* Reduce padding for smaller screens */
+            }
+
+            .game-container {
+                padding: 1rem;
+                max-width: 100%; /* Ensure it takes the full width */
+                border-radius: 5px; /* Make corners less rounded */
+            }
+
+            .counter {
+                font-size: 3rem; /* Reduce the counter size on mobile */
+            }
+
+            .enter-button {
+                font-size: 1.2rem; /* Make button text larger */
+                padding: 0.8rem 1rem; /* Make button larger */
+                margin: 1rem auto; /* Margins for spacing */
+            }
+
+            .shop-button {
+                bottom: 10px; /* Adjust position */
+                left: 10px; /* Adjust position */
+                width: 60px; /* Smaller icon size for mobile */
+                height: 60px; /* Smaller icon size for mobile */
+                font-size: 1.2rem; /* Even larger icon */
+            }
+
+            .shop-menu {
+                width: 90%; /* Take more of the screen */
+                padding: 10px; /* Ensure items aren't too close to the edge */
+            }
+
+            .shop-item {
+                width: 100%; /* Full width on mobile */
+                max-width: none; /* Remove max-width constraint */
+                margin: 5px 0; /* Stack items vertically with slight space */
+            }
+
+            .rebirth-button, .reset-button, .upgrade-button {
+                padding: 0.6rem 1rem; /* Increase button size for better touch area */
+                font-size: 1rem; /* Adjust button font size */
+            }
+
+            .cookie-consent {
+                padding: 10px; /* Reduce padding */
+                font-size: 0.85rem; /* Slightly reduce font size */
+            }
+
+            .debug-overlay {
+                font-size: 0.8rem; /* Smaller font size for debug overlay */
+            }
+
+            /* Custom theme panel adjustments for mobile */
+            .custom-theme-panel {
+                width: 95%;
+                max-width: none;
+            }
+
+            .custom-theme-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-height: 800px) {
+            .game-container {
+                min-height: 300px; /* Less height restriction for mobile */
+                padding: 1rem; /* Padding for smaller devices */
+            }
+
+            .warning-box {
+                margin-top: 5px; /* Adjust warning box */
+            }
+        }
+
+        /* New styles for the shop button and menu */
+        .shop-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 70px; /* Increased size */
+            height: 70px; /* Increased size */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-size: 1.5rem; /* Larger icon */
+            animation: pulse 2s infinite; /* Added animation */
+        }
+
+        .shop-button:hover {
+            transform: scale(1.1); /* Slightly enlarge on hover */
+            box-shadow: 0 6px 12px var(--shadow-color);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .shop-menu {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            padding: 20px;
+            width: 800px; /* Wider menu */
+            z-index: 1001;
+            display: none;
+            flex-direction: row; /* Horizontal layout */
+            flex-wrap: wrap; /* Wrap items if they don't fit */
+            justify-content: space-around; /* Space items evenly */
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .shop-menu.open {
+            display: flex;
+        }
+
+        .shop-menu .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .shop-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            transition: all 0.3s ease;
+            width: 200px; /* Fixed width for each item */
+            position: relative; /* Added for cooldown overlay */
+        }
+
+        .shop-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+
+        .shop-item h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+
+        .shop-item p {
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: var(--secondary-text);
+            text-align: center;
+        }
+
+        .shop-item .buy-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .shop-item .buy-button:hover {
+            background-color: #388E3C; /* Change hover color */
+        }
+
+        .shop-item .buy-button:disabled {
+            background-color: #9E9E9E; /* Change disabled color */
+            cursor: not-allowed;
+        }
+
+        .shop-item .disable-button {
+            background-color: #f44336; /* Change button color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .shop-item .disable-button:hover {
+            background-color: #d32f2f; /* Change hover color */
+        }
+
+        .shop-item .disable-button:disabled {
+            background-color: #9E9E9E; /* Change disabled color */
+            cursor: not-allowed;
+        }
+
+        .blur-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+        }
+
+        .blur-overlay.active {
+            display: block;
+        }
+
+        /* Centered Auto Clicker Buttons */
+        .auto-clicker-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* Space between buttons */
+            margin-top: 20px; /* Space above the buttons */
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0);
+            border: 1px solid rgba(255, 255, 255, 0);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0.1;
+            transition: opacity 0.3s ease;
+        }
+
+        .admin-panel-icon:hover {
+            opacity: 1;
+        }
+
+        .admin-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            padding: 20px;
+            width: 400px;
+            z-index: 1001;
+            display: none;
+        }
+
+        .admin-panel.open {
+            display: block;
+        }
+
+        .admin-panel .close-button {
+            position: absolute;
+            top: 8px;
+            right: -185px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .admin-panel h2 {
+            margin-top: 0;
+        }
+
+        .admin-panel input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+        }
+
+        .admin-panel button {
+            width: 100%;
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .admin-panel button:hover {
+            background-color: #388E3C;
+        }
+
+        /* Rate Limiter Buttons */
+        .rate-limiter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .rate-limiter-buttons .buy-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .rate-limiter-buttons .disable-button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .rate-limiter-buttons button:disabled {
+            background-color: #9E9E9E;
+            cursor: not-allowed;
+        }
+
+        /* Welcome Screen Overlay */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .welcome-content {
+            text-align: center;
+            background-color: var(--container-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .welcome-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .welcome-content p {
+            font-size: 1.1rem;
+            color: var(--secondary-text);
+            margin-bottom: 2rem;
+        }
+
+        .welcome-content .play-button {
+            background-color: #2196F3;
+            color: white;
+            font-size: 1.2rem;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .welcome-content .play-button:hover {
+            background-color: #1976D2;
+        }
+
+        /* Quantum Garden Styles */
+        .quantum-garden-item {
+            display: none; /* Hidden by default */
+        }
+
+        .quantum-garden-item.show {
+            display: block; /* Show when unlocked */
+        }
+
+        .quantum-garden-item .buy-button {
+            background-color: #9C27B0; /* Purple color for uniqueness */
+        }
+
+        .quantum-garden-item .buy-button:hover {
+            background-color: #7B1FA2; /* Darker purple on hover */
+        }
+
+        .quantum-garden-item .buy-button:disabled {
+            background-color: #9E9E9E;
+            cursor: not-allowed;
+        }
+
+        /* New shop item styles */
+        .cosmic-item .buy-button {
+            background-color: #2196F3; /* Blue for cosmic items */
+        }
+
+        .cosmic-item .buy-button:hover {
+            background-color: #0b7dda;
+        }
+
+        .time-item .buy-button {
+            background-color: #FF9800; /* Orange for time items */
+        }
+
+        .time-item .buy-button:hover {
+            background-color: #e68a00;
+        }
+
+        .dimensional-item .buy-button {
+            background-color: #4CAF50; /* Green for dimensional items */
+        }
+
+        .dimensional-item .buy-button:hover {
+            background-color: #3e8e41;
+        }
+
+        .reality-item .buy-button {
+            background-color: #F44336; /* Red for reality items */
+        }
+
+        .reality-item .buy-button:hover {
+            background-color: #da190b;
+        }
+
+        .quantum-item .buy-button {
+            background-color: #9C27B0; /* Purple for quantum items */
+        }
+
+        .quantum-item .buy-button:hover {
+            background-color: #7b1fa2;
+        }
+
+        .infinity-item .buy-button {
+            background-color: #00BCD4; /* Cyan for infinity items */
+        }
+
+        .infinity-item .buy-button:hover {
+            background-color: #0097a7;
+        }
+
+        .void-item .buy-button {
+            background-color: #607D8B; /* Blue grey for void items */
+        }
+
+        .void-item .buy-button:hover {
+            background-color: #455a64;
+        }
+
+        .celestial-item .buy-button {
+            background-color: #FFEB3B; /* Yellow for celestial items */
+            color: #333;
+        }
+
+        .celestial-item .buy-button:hover {
+            background-color: #fdd835;
+        }
+
+        .eternity-item .buy-button {
+            background-color: #795548; /* Brown for eternity items */
+        }
+
+        .eternity-item .buy-button:hover {
+            background-color: #5d4037;
+        }
+
+        .omnipotent-item .buy-button {
+            background: linear-gradient(45deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #9400D3);
+            background-size: 400% 400%;
+            animation: rainbowBackground 5s ease infinite;
+            color: white;
+        }
+
+        .omnipotent-item .buy-button:hover {
+            animation: rainbowBackground 2s ease infinite;
+        }
+
+        .shop-item .item-requirement {
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .shop-item .item-status {
+            font-size: 0.8rem;
+            margin-top: 10px;
+            color: var(--secondary-text);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <!-- Theme Button and Menu -->
+        <div class="theme-menu">
+            <button id="themeButton" class="theme-button">
+                <span class="icon">🎨</span>
+                <span class="text">Customize</span>
+            </button>
+        </div>
+
+        <!-- New Theme Menu Panel (Removed since we're moving everything to custom panel) -->
+
+        <!-- Custom Theme Panel -->
+        <div id="customThemePanel" class="custom-theme-panel">
+            <button class="close-button" id="closeCustomThemePanel">✕</button>
+            <h2>Theme Customizer</h2>
+            
+            <div class="theme-menu-buttons">
+                <button id="lightTheme">Light</button>
+                <button id="darkTheme">Dark</button>
+                <button id="rainbowLightTheme">Rainbow Light</button>
+                <button id="rainbowDarkTheme">Moonlight</button>
+            </div>
+            
+            <div class="custom-theme-controls">
+                <div class="custom-theme-control">
+                    <label for="bgColor">Background Color</label>
+                    <input type="color" id="bgColor" value="#f5f5f5">
+                </div>
+                
+                <div class="custom-theme-control">
+                    <label for="containerBg">Container Background</label>
+                    <input type="color" id="containerBg" value="#ffffff">
+                </div>
+                
+                <div class="custom-theme-control">
+                    <label for="textColor">Text Color</label>
+                    <input type="color" id="textColor" value="#333333">
+                </div>
+                
+                <div class="custom-theme-control">
+                    <label for="secondaryText">Secondary Text</label>
+                    <input type="color" id="secondaryText" value="#666666">
+                </div>
+                
+                <div class="custom-theme-control">
+                    <label for="borderColor">Border Color</label>
+                    <input type="color" id="borderColor" value="#e0e0e0">
+                </div>
+                
+                <div class="custom-theme-control">
+                    <label for="rebirthColor">Rebirth Button</label>
+                    <input type="color" id="rebirthColor" value="#673AB7">
+                </div>
+                
+                <div class="custom-theme-control">
+                    <label for="shadowOpacity">Shadow Opacity</label>
+                    <input type="range" id="shadowOpacity" min="0" max="100" value="10">
+                </div>
+                
+                <div class="custom-theme-control">
+                    <label for="contrast">Contrast</label>
+                    <input type="range" id="contrast" min="80" max="150" value="100">
+                </div>
+            </div>
+            
+            <div class="custom-theme-presets">
+                <div class="custom-theme-preset" data-preset="light">Light</div>
+                <div class="custom-theme-preset" data-preset="dark">Dark</div>
+                <div class="custom-theme-preset" data-preset="ocean">Ocean</div>
+                <div class="custom-theme-preset" data-preset="forest">Forest</div>
+                <div class="custom-theme-preset" data-preset="sunset">Sunset</div>
+                <div class="custom-theme-preset" data-preset="matrix">Matrix</div>
+            </div>
+            
+            <div class="custom-theme-actions">
+                <button class="custom-theme-btn reset" id="resetCustomTheme">Reset</button>
+                <button class="custom-theme-btn save" id="saveCustomTheme">Save</button>
+                <button class="custom-theme-btn apply" id="applyCustomTheme">Apply</button>
+            </div>
+        </div>
+
+        <div class="credit-box">Made by Damian B - Meowinc<span class="trademark">™</span></div>
+        
+        <div class="game-container">
+            <div class="instructions">Press Enter key or click the button below <span id="rateLimitInfo" class="rate-limiter"></span></div>
+            <div class="counter" id="counter">0</div>
+            
+            <button class="button enter-button" id="enterButton">
+                CLICK
+                <span>or press Enter key</span>
+            </button>
+            
+            <div class="stats">
+                <p>Score per press: <span id="multiplier" class="multiplier">1</span></p>
+                <p>Next upgrade cost: <span id="upgradeCost">10</span> points</p>
+                <p>Rebirth level: <span id="rebirthLevel" class="rebirth-stat">0</span> (+<span id="rebirthBonus">0</span>% per click)</p>
+                <p class="save-message" id="saveMessage">Accept cookies to save your progress</p>
+            </div>
+            
+            <div class="button-container">
+                <button class="button reset-button" id="resetButton">Reset Game</button>
+            </div>
+        </div>
+        
+        <div class="warning-box">
+            No external autoclickers or you'll be blacklisted from the website!
+        </div>
+    </div>
+    
+    <div id="cookieConsent" class="cookie-consent">
+        <div class="cookie-text">This site uses cookies to save your game progress. By accepting, you'll never lose your clicks again!</div>
+        <button id="acceptCookies" class="cookie-button">Accept Cookies</button>
+    </div>
+
+    <!-- Shop Button -->
+    <div class="shop-button" id="shopButton">
+        🛒
+    </div>
+
+    <!-- Shop Menu -->
+    <div class="shop-menu" id="shopMenu">
+        <button class="close-button" id="closeShopMenu">✕</button>
+        <h2>Shop</h2>
+        
+        <!-- Multiplier Upgrade Item -->
+        <div class="shop-item">
+            <h3>Multiplier Upgrade</h3>
+            <p>Double your points per click!</p>
+            <button class="buy-button" id="upgradeButton">
+                Buy: <span id="upgradeCostDisplay">10</span> points
+            </button>
+            <div class="cooldown-overlay" id="upgradeCooldownOverlay" style="display: none;">
+                <span id="upgradeCooldownText"></span>
+            </div>
+        </div>
+        
+        <!-- Rebirth Item -->
+        <div class="shop-item">
+            <h3>Rebirth</h3>
+            <p>Reset your progress for a permanent bonus!</p>
+            <button class="buy-button" id="rebirthButton" disabled>
+                Rebirth: <span id="rebirthCostDisplay">1,000</span> points
+            </button>
+        </div>
+
+        <!-- Auto Clicker Upgrade Item (Hidden until 1 rebirth) -->
+        <div class="shop-item" id="autoClickerItem" style="display: none;">
+            <h3>Auto Clicker</h3>
+            <p>Automatically clicks for you every 0.2 seconds!</p>
+            <div class="auto-clicker-buttons">
+                <button class="buy-button" id="autoClickerButton">
+                    Enable Auto Clicker
+                </button>
+                <button class="disable-button" id="disableAutoClickerButton" disabled>
+                    Disable Auto Clicker
+                </button>
+            </div>
+        </div>
+
+        <!-- Time Warp Item (Hidden until 2 rebirths) -->
+        <div class="shop-item" id="timeWarpItem" style="display: none;">
+            <h3>Time Warp</h3>
+            <p>Temporarily quintuple your points for 5 seconds! (10-minute cooldown)</p>
+            <button class="buy-button" id="timeWarpButton">
+                Activate Time Warp
+            </button>
+            <div class="cooldown-overlay" id="timeWarpCooldownOverlay" style="display: none;">
+                <span id="timeWarpCooldownText"></span>
+            </div>
+        </div>
+
+        <!-- Quantum Leap Item (Hidden until 3 rebirths) -->
+        <div class="shop-item" id="quantumLeapItem" style="display: none;">
+            <h3>Quantum Leap</h3>
+            <p>Instantly gain 1,000,000 points! (30-minute cooldown)</p>
+            <button class="buy-button" id="quantumLeapButton">
+                Activate Quantum Leap
+            </button>
+            <div class="cooldown-overlay" id="quantumLeapCooldownOverlay" style="display: none;">
+                <span id="quantumLeapCooldownText"></span>
+            </div>
+        </div>
+
+        <!-- Quantum Garden Item (Hidden until 4 rebirths) -->
+        <div class="shop-item quantum-garden-item" id="quantumGardenItem">
+            <h3>Quantum Garden</h3>
+            <p>Grow quantum plants that generate points automatically!</p>
+            <button class="buy-button" id="quantumGardenButton">
+                Plant Garden
+            </button>
+            <div class="garden-status" id="gardenStatus">Garden not planted yet.</div>
+        </div>
+
+        <!-- Cosmic Harvester (5 rebirths) -->
+        <div class="shop-item cosmic-item" id="cosmicHarvesterItem" style="display: none;">
+            <h3>Cosmic Harvester</h3>
+            <p>Harvest cosmic energy for massive point boosts!</p>
+            <p class="item-requirement">Requires 5 rebirths</p>
+            <button class="buy-button" id="cosmicHarvesterButton">
+                Activate Harvester
+            </button>
+            <div class="cooldown-overlay" id="cosmicHarvesterCooldownOverlay" style="display: none;">
+                <span id="cosmicHarvesterCooldownText"></span>
+            </div>
+            <div class="item-status" id="cosmicHarvesterStatus">Not active</div>
+        </div>
+
+        <!-- Time Fracture (6 rebirths) -->
+        <div class="shop-item time-item" id="timeFractureItem" style="display: none;">
+            <h3>Time Fracture</h3>
+            <p>Slow down time to click faster than ever before!</p>
+            <p class="item-requirement">Requires 6 rebirths</p>
+            <button class="buy-button" id="timeFractureButton">
+                Fracture Time
+            </button>
+            <div class="cooldown-overlay" id="timeFractureCooldownOverlay" style="display: none;">
+                <span id="timeFractureCooldownText"></span>
+            </div>
+            <div class="item-status" id="timeFractureStatus">Time is normal</div>
+        </div>
+
+        <!-- Dimensional Portal (7 rebirths) -->
+        <div class="shop-item dimensional-item" id="dimensionalPortalItem" style="display: none;">
+            <h3>Dimensional Portal</h3>
+            <p>Open a portal to another dimension with unique bonuses!</p>
+            <p class="item-requirement">Requires 7 rebirths</p>
+            <button class="buy-button" id="dimensionalPortalButton">
+                Open Portal
+            </button>
+            <div class="item-status" id="dimensionalPortalStatus">Portal closed</div>
+        </div>
+
+        <!-- Reality Warper (8 rebirths) -->
+        <div class="shop-item reality-item" id="realityWarperItem" style="display: none;">
+            <h3>Reality Warper</h3>
+            <p>Bend reality to your will for exponential gains!</p>
+            <p class="item-requirement">Requires 8 rebirths</p>
+            <button class="buy-button" id="realityWarperButton">
+                Warp Reality
+            </button>
+            <div class="item-status" id="realityWarperStatus">Reality stable</div>
+        </div>
+
+        <!-- Quantum Singularity (9 rebirths) -->
+        <div class="shop-item quantum-item" id="quantumSingularityItem" style="display: none;">
+            <h3>Quantum Singularity</h3>
+            <p>Create a singularity that generates points from nothingness!</p>
+            <p class="item-requirement">Requires 9 rebirths</p>
+            <button class="buy-button" id="quantumSingularityButton">
+                Create Singularity
+            </button>
+            <div class="item-status" id="quantumSingularityStatus">No singularity</div>
+        </div>
+
+        <!-- Infinity Engine (10 rebirths) -->
+        <div class="shop-item infinity-item" id="infinityEngineItem" style="display: none;">
+            <h3>Infinity Engine</h3>
+            <p>Harness infinite energy for unlimited potential!</p>
+            <p class="item-requirement">Requires 10 rebirths</p>
+            <button class="buy-button" id="infinityEngineButton">
+                Activate Engine
+            </button>
+            <div class="item-status" id="infinityEngineStatus">Engine offline</div>
+        </div>
+
+        <!-- Void Extractor (11 rebirths) -->
+        <div class="shop-item void-item" id="voidExtractorItem" style="display: none;">
+            <h3>Void Extractor</h3>
+            <p>Extract points from the void between dimensions!</p>
+            <p class="item-requirement">Requires 11 rebirths</p>
+            <button class="buy-button" id="voidExtractorButton">
+                Extract Void Energy
+            </button>
+            <div class="item-status" id="voidExtractorStatus">Not extracting</div>
+        </div>
+
+        <!-- Celestial Forge (12 rebirths) -->
+        <div class="shop-item celestial-item" id="celestialForgeItem" style="display: none;">
+            <h3>Celestial Forge</h3>
+            <p>Forge celestial artifacts that boost all your abilities!</p>
+            <p class="item-requirement">Requires 12 rebirths</p>
+            <button class="buy-button" id="celestialForgeButton">
+                Activate Forge
+            </button>
+            <div class="item-status" id="celestialForgeStatus">Forge inactive</div>
+        </div>
+
+        <!-- Eternity Core (13 rebirths) -->
+        <div class="shop-item eternity-item" id="eternityCoreItem" style="display: none;">
+            <h3>Eternity Core</h3>
+            <p>Tap into the power of eternity itself!</p>
+            <p class="item-requirement">Requires 13 rebirths</p>
+            <button class="buy-button" id="eternityCoreButton">
+                Power Core
+            </button>
+            <div class="item-status" id="eternityCoreStatus">Core dormant</div>
+        </div>
+
+        <!-- Omnipotent Ascension (14 rebirths) -->
+        <div class="shop-item omnipotent-item" id="omnipotentAscensionItem" style="display: none;">
+            <h3>Omnipotent Ascension</h3>
+            <p>Ascend to near-omnipotence with ultimate power!</p>
+            <p class="item-requirement">Requires 14 rebirths</p>
+            <button class="buy-button" id="omnipotentAscensionButton">
+                Ascend Now
+            </button>
+            <div class="item-status" id="omnipotentAscensionStatus">Mortal form</div>
+        </div>
+    </div>
+
+    <!-- Blur Overlay -->
+    <div class="blur-overlay" id="blurOverlay"></div>
+
+    <!-- Admin Panel Icon -->
+    <div class="admin-panel-icon" id="adminPanelIcon"></div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <button class="close-button" id="closeAdminPanel">✕</button>
+        <h2>Admin Panel</h2>
+        <input type="number" id="setScoreInput" placeholder="Set Score">
+        <button id="setScoreButton">Set Score</button>
+        <input type="number" id="setRebirthsInput" placeholder="Set Rebirths">
+        <button id="setRebirthsButton">Set Rebirths</button>
+        <input type="number" id="setMultiplierInput" placeholder="Set Multiplier">
+        <button id="setMultiplierButton">Set Multiplier</button>
+        <button id="enableAutoClicker">Enable Auto Clicker (Very Glitchy, refresh after use)</button>
+        <button id="disableAutoClicker">Disable Auto Clicker (Very glitchy, refresh after use)</button>
+        <button id="resetGame">Reset Game</button>
+        <div class="rate-limiter-buttons">
+            <button id="enableRateLimiter" class="buy-button">Enable Rate Limiter</button>
+            <button id="disableRateLimiter" class="disable-button">Disable Rate Limiter</button>
+        </div>
+    </div>
+
+    <script>
+        // Permanent ban check - must be first thing in the script
+        if (localStorage.getItem('permanentBan') === 'true') {
+            window.location.href = "https://meowinc-owner.github.io/enterclicker/permanent-ban";
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Blacklist system variables
+            const BLACKLIST_URL = 'https://meowinc-owner.github.io/enterclicker/blacklisted';
+            const BLACKLIST_DURATION = 10 * 60 * 1000; // 10 minutes in milliseconds
+            const UNBAN_PASSCODE = "UNBAN-CHECKDEV";
+            let isBlacklisted = false;
+            let clickHistory = [];
+
+            // Check blacklist status
+            function checkBlacklist() {
+                const blacklistExpiry = localStorage.getItem('blacklistExpiry');
+                if (blacklistExpiry && Date.now() < parseInt(blacklistExpiry, 10)) {
+                    isBlacklisted = true;
+                    // Pass the existing expiry time to maintain the original ban duration
+                    window.location.href = BLACKLIST_URL + "?expiry=" + blacklistExpiry;
+                    return true;
+                }
+                return false;
+            }
+
+            // Redirect to blacklist page
+            function redirectToBlacklist() {
+                // First check if we're already blacklisted
+                if (!checkBlacklist()) {
+                    // Only set new blacklist if we're not already blacklisted
+                    const expiryTime = Date.now() + BLACKLIST_DURATION;
+                    localStorage.setItem('blacklistExpiry', expiryTime.toString());
+                    window.location.href = BLACKLIST_URL + "?expiry=" + expiryTime;
+                }
+            }
+
+            // Check blacklist status on load
+            if (checkBlacklist()) {
+                return; // Don't proceed with the rest if blacklisted
+            }
+
+            const counterElement = document.getElementById('counter');
+            const resetButton = document.getElementById('resetButton');
+            const upgradeButton = document.getElementById('upgradeButton');
+            const enterButton = document.getElementById('enterButton');
+            const multiplierElement = document.getElementById('multiplier');
+            const upgradeCostElement = document.getElementById('upgradeCost');
+            const saveMessageElement = document.getElementById('saveMessage');
+            const cookieConsentElement = document.getElementById('cookieConsent');
+            const acceptCookiesButton = document.getElementById('acceptCookies');
+            const themeButton = document.getElementById('themeButton');
+            const lightThemeButton = document.getElementById('lightTheme');
+            const darkThemeButton = document.getElementById('darkTheme');
+            const rainbowLightThemeButton = document.getElementById('rainbowLightTheme');
+            const rainbowDarkThemeButton = document.getElementById('rainbowDarkTheme');
+            const rebirthButton = document.getElementById('rebirthButton');
+            const rebirthLevelElement = document.getElementById('rebirthLevel');
+            const rebirthBonusElement = document.getElementById('rebirthBonus');
+            const rebirthInfoElement = document.getElementById('rebirthInfo');
+            const rateLimitInfoElement = document.getElementById('rateLimitInfo');
+            const upgradeCooldownElement = document.getElementById('upgradeCooldown');
+            const shopButton = document.getElementById('shopButton');
+            const shopMenu = document.getElementById('shopMenu');
+            const closeShopMenu = document.getElementById('closeShopMenu');
+            const blurOverlay = document.getElementById('blurOverlay');
+            const upgradeCostDisplay = document.getElementById('upgradeCostDisplay');
+            const rebirthCostDisplay = document.getElementById('rebirthCostDisplay');
+            const autoClickerButton = document.getElementById('autoClickerButton');
+            const disableAutoClickerButton = document.getElementById('disableAutoClickerButton');
+            const autoClickerItem = document.getElementById('autoClickerItem');
+            const timeWarpItem = document.getElementById('timeWarpItem');
+            const timeWarpButton = document.getElementById('timeWarpButton');
+            const timeWarpCooldownOverlay = document.getElementById('timeWarpCooldownOverlay');
+            const timeWarpCooldownText = document.getElementById('timeWarpCooldownText');
+            const quantumLeapItem = document.getElementById('quantumLeapItem');
+            const quantumLeapButton = document.getElementById('quantumLeapButton');
+            const quantumLeapCooldownOverlay = document.getElementById('quantumLeapCooldownOverlay');
+            const quantumLeapCooldownText = document.getElementById('quantumLeapCooldownText');
+            const quantumGardenItem = document.getElementById('quantumGardenItem');
+            const quantumGardenButton = document.getElementById('quantumGardenButton');
+            const gardenStatus = document.getElementById('gardenStatus');
+            const adminPanelIcon = document.getElementById('adminPanelIcon');
+            const adminPanel = document.getElementById('adminPanel');
+            const closeAdminPanel = document.getElementById('closeAdminPanel');
+            const setScoreInput = document.getElementById('setScoreInput');
+            const setScoreButton = document.getElementById('setScoreButton');
+            const setRebirthsInput = document.getElementById('setRebirthsInput');
+            const setRebirthsButton = document.getElementById('setRebirthsButton');
+            const setMultiplierInput = document.getElementById('setMultiplierInput');
+            const setMultiplierButton = document.getElementById('setMultiplierButton');
+            const enableAutoClicker = document.getElementById('enableAutoClicker');
+            const disableAutoClicker = document.getElementById('disableAutoClicker');
+            const resetGame = document.getElementById('resetGame');
+            const enableRateLimiter = document.getElementById('enableRateLimiter');
+            const disableRateLimiter = document.getElementById('disableRateLimiter');
+            const welcomeOverlay = document.getElementById('welcomeOverlay');
+            const playButton = document.getElementById('playButton');
+            const upgradeCooldownOverlay = document.getElementById('upgradeCooldownOverlay');
+            const upgradeCooldownText = document.getElementById('upgradeCooldownText');
+
+            // Custom theme elements
+            const customThemePanel = document.getElementById('customThemePanel');
+            const closeCustomThemePanel = document.getElementById('closeCustomThemePanel');
+            const bgColorInput = document.getElementById('bgColor');
+            const containerBgInput = document.getElementById('containerBg');
+            const textColorInput = document.getElementById('textColor');
+            const secondaryTextInput = document.getElementById('secondaryText');
+            const borderColorInput = document.getElementById('borderColor');
+            const rebirthColorInput = document.getElementById('rebirthColor');
+            const shadowOpacityInput = document.getElementById('shadowOpacity');
+            const contrastInput = document.getElementById('contrast');
+            const resetCustomThemeBtn = document.getElementById('resetCustomTheme');
+            const saveCustomThemeBtn = document.getElementById('saveCustomTheme');
+            const applyCustomThemeBtn = document.getElementById('applyCustomTheme');
+            const themePresets = document.querySelectorAll('.custom-theme-preset');
+
+            // New shop item elements
+            const cosmicHarvesterItem = document.getElementById('cosmicHarvesterItem');
+            const cosmicHarvesterButton = document.getElementById('cosmicHarvesterButton');
+            const cosmicHarvesterCooldownOverlay = document.getElementById('cosmicHarvesterCooldownOverlay');
+            const cosmicHarvesterCooldownText = document.getElementById('cosmicHarvesterCooldownText');
+            const cosmicHarvesterStatus = document.getElementById('cosmicHarvesterStatus');
+            
+            const timeFractureItem = document.getElementById('timeFractureItem');
+            const timeFractureButton = document.getElementById('timeFractureButton');
+            const timeFractureCooldownOverlay = document.getElementById('timeFractureCooldownOverlay');
+            const timeFractureCooldownText = document.getElementById('timeFractureCooldownText');
+            const timeFractureStatus = document.getElementById('timeFractureStatus');
+            
+            const dimensionalPortalItem = document.getElementById('dimensionalPortalItem');
+            const dimensionalPortalButton = document.getElementById('dimensionalPortalButton');
+            const dimensionalPortalStatus = document.getElementById('dimensionalPortalStatus');
+            
+            const realityWarperItem = document.getElementById('realityWarperItem');
+            const realityWarperButton = document.getElementById('realityWarperButton');
+            const realityWarperStatus = document.getElementById('realityWarperStatus');
+            
+            const quantumSingularityItem = document.getElementById('quantumSingularityItem');
+            const quantumSingularityButton = document.getElementById('quantumSingularityButton');
+            const quantumSingularityStatus = document.getElementById('quantumSingularityStatus');
+            
+            const infinityEngineItem = document.getElementById('infinityEngineItem');
+            const infinityEngineButton = document.getElementById('infinityEngineButton');
+            const infinityEngineStatus = document.getElementById('infinityEngineStatus');
+            
+            const voidExtractorItem = document.getElementById('voidExtractorItem');
+            const voidExtractorButton = document.getElementById('voidExtractorButton');
+            const voidExtractorStatus = document.getElementById('voidExtractorStatus');
+            
+            const celestialForgeItem = document.getElementById('celestialForgeItem');
+            const celestialForgeButton = document.getElementById('celestialForgeButton');
+            const celestialForgeStatus = document.getElementById('celestialForgeStatus');
+            
+            const eternityCoreItem = document.getElementById('eternityCoreItem');
+            const eternityCoreButton = document.getElementById('eternityCoreButton');
+            const eternityCoreStatus = document.getElementById('eternityCoreStatus');
+            
+            const omnipotentAscensionItem = document.getElementById('omnipotentAscensionItem');
+            const omnipotentAscensionButton = document.getElementById('omnipotentAscensionButton');
+            const omnipotentAscensionStatus = document.getElementById('omnipotentAscensionStatus');
+
+            // Initialize game state with defaults
+            let count = 0;
+            let multiplier = 1;
+            let upgradeCost = 10;
+            let cookiesAccepted = false;
+            let currentTheme = 'light';
+            let rebirthLevel = 0;
+            let rebirthCost = 1000;
+            let autoClickerEnabled = false;
+            let autoClickerInterval = null;
+            let timeWarpActive = false;
+            let timeWarpCooldown = false;
+            let timeWarpCooldownEnd = 0;
+            let quantumLeapCooldown = false;
+            let quantumLeapCooldownEnd = 0;
+            let upgradeCooldownActive = false;
+            let upgradeCooldownEnd = 0;
+            let isShopOpen = false;
+            let quantumGardenPlanted = false;
+            let quantumGardenInterval = null;
+
+            // New shop item states
+            let cosmicHarvesterActive = false;
+            let cosmicHarvesterCooldown = false;
+            let cosmicHarvesterCooldownEnd = 0;
+            let timeFractureActive = false;
+            let timeFractureCooldown = false;
+            let timeFractureCooldownEnd = 0;
+            let dimensionalPortalOpen = false;
+            let realityWarped = false;
+            let quantumSingularityCreated = false;
+            let infinityEngineActive = false;
+            let voidExtractorActive = false;
+            let celestialForgeActive = false;
+            let eternityCoreActive = false;
+            let omnipotentAscensionAchieved = false;
+
+            // Rate limiters
+            let lastClickTime = 0;
+            const clickCooldown = 200; // 0.2 seconds in milliseconds
+            let isClickOnCooldown = true;
+
+            // Check if cookies were previously accepted
+            if (getCookie('cookiesAccepted') === 'true') {
+                cookiesAccepted = true;
+                cookieConsentElement.style.display = 'none';
+                loadGameData();
+            }
+
+            // Check if theme was previously set
+            const savedTheme = getCookie('theme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            }
+
+            // Theme button click handler - opens the custom theme panel
+            themeButton.addEventListener('click', function() {
+                customThemePanel.classList.add('show');
+                blurOverlay.classList.add('active');
+            });
+
+            // Close custom theme panel
+            closeCustomThemePanel.addEventListener('click', function() {
+                customThemePanel.classList.remove('show');
+                blurOverlay.classList.remove('active');
+            });
+
+            // Light theme button click handler
+            lightThemeButton.addEventListener('click', function() {
+                setTheme('light');
+                customThemePanel.classList.remove('show');
+                blurOverlay.classList.remove('active');
+            });
+
+            // Dark theme button click handler
+            darkThemeButton.addEventListener('click', function() {
+                setTheme('dark');
+                customThemePanel.classList.remove('show');
+                blurOverlay.classList.remove('active');
+            });
+
+            // Rainbow Light theme button click handler
+            rainbowLightThemeButton.addEventListener('click', function() {
+                setTheme('rainbow-light');
+                customThemePanel.classList.remove('show');
+                blurOverlay.classList.remove('active');
+            });
+
+            // Rainbow Dark theme button click handler
+            rainbowDarkThemeButton.addEventListener('click', function() {
+                setTheme('rainbow-dark');
+                customThemePanel.classList.remove('show');
+                blurOverlay.classList.remove('active');
+            });
+
+            // Apply custom theme
+            applyCustomThemeBtn.addEventListener('click', function() {
+                applyCustomTheme();
+            });
+
+            // Save custom theme
+            saveCustomThemeBtn.addEventListener('click', function() {
+                const customTheme = {
+                    bgColor: bgColorInput.value,
+                    containerBg: containerBgInput.value,
+                    textColor: textColorInput.value,
+                    secondaryText: secondaryTextInput.value,
+                    borderColor: borderColorInput.value,
+                    rebirthColor: rebirthColorInput.value,
+                    shadowOpacity: shadowOpacityInput.value,
+                    contrast: contrastInput.value
+                };
+                
+                setCookie('customTheme', JSON.stringify(customTheme), 365);
+                alert('Custom theme saved!');
+            });
+
+            // Reset custom theme
+            resetCustomThemeBtn.addEventListener('click', function() {
+                bgColorInput.value = '#f5f5f5';
+                containerBgInput.value = '#ffffff';
+                textColorInput.value = '#333333';
+                secondaryTextInput.value = '#666666';
+                borderColorInput.value = '#e0e0e0';
+                rebirthColorInput.value = '#673AB7';
+                shadowOpacityInput.value = 10;
+                contrastInput.value = 100;
+                
+                applyCustomTheme();
+            });
+
+            // Theme presets
+            themePresets.forEach(preset => {
+                preset.addEventListener('click', function() {
+                    const presetType = this.getAttribute('data-preset');
+                    applyThemePreset(presetType);
+                });
+            });
+
+            // Function to apply theme preset
+            function applyThemePreset(preset) {
+                switch(preset) {
+                    case 'light':
+                        bgColorInput.value = '#f5f5f5';
+                        containerBgInput.value = '#ffffff';
+                        textColorInput.value = '#333333';
+                        secondaryTextInput.value = '#666666';
+                        borderColorInput.value = '#e0e0e0';
+                        rebirthColorInput.value = '#673AB7';
+                        shadowOpacityInput.value = 10;
+                        contrastInput.value = 100;
+                        break;
+                    case 'dark':
+                        bgColorInput.value = '#121212';
+                        containerBgInput.value = '#1e1e1e';
+                        textColorInput.value = '#e0e0e0';
+                        secondaryTextInput.value = '#b0b0b0';
+                        borderColorInput.value = '#333333';
+                        rebirthColorInput.value = '#9575CD';
+                        shadowOpacityInput.value = 30;
+                        contrastInput.value = 100;
+                        break;
+                    case 'ocean':
+                        bgColorInput.value = '#e0f7fa';
+                        containerBgInput.value = '#b2ebf2';
+                        textColorInput.value = '#006064';
+                        secondaryTextInput.value = '#00838f';
+                        borderColorInput.value = '#4fb3bf';
+                        rebirthColorInput.value = '#0288d1';
+                        shadowOpacityInput.value = 15;
+                        contrastInput.value = 120;
+                        break;
+                    case 'forest':
+                        bgColorInput.value = '#e8f5e9';
+                        containerBgInput.value = '#c8e6c9';
+                        textColorInput.value = '#1b5e20';
+                        secondaryTextInput.value = '#2e7d32';
+                        borderColorInput.value = '#66bb6a';
+                        rebirthColorInput.value = '#43a047';
+                        shadowOpacityInput.value = 15;
+                        contrastInput.value = 110;
+                        break;
+                    case 'sunset':
+                        bgColorInput.value = '#fff3e0';
+                        containerBgInput.value = '#ffe0b2';
+                        textColorInput.value = '#e65100';
+                        secondaryTextInput.value = '#ef6c00';
+                        borderColorInput.value = '#ff8a65';
+                        rebirthColorInput.value = '#ff5722';
+                        shadowOpacityInput.value = 20;
+                        contrastInput.value = 130;
+                        break;
+                    case 'matrix':
+                        bgColorInput.value = '#000000';
+                        containerBgInput.value = '#0a0a0a';
+                        textColorInput.value = '#00ff00';
+                        secondaryTextInput.value = '#00cc00';
+                        borderColorInput.value = '#003300';
+                        rebirthColorInput.value = '#00ff00';
+                        shadowOpacityInput.value = 50;
+                        contrastInput.value = 150;
+                        break;
+                }
+                
+                applyCustomTheme();
+            }
+
+            // Function to apply custom theme
+            function applyCustomTheme() {
+                document.body.classList.remove('dark-mode', 'rainbow-light-mode', 'rainbow-dark-mode');
+                document.body.classList.add('custom-theme');
+                
+                // Calculate contrast adjustment
+                const contrast = parseInt(contrastInput.value) / 100;
+                
+                // Apply custom colors
+                document.body.style.setProperty('--bg-color', bgColorInput.value);
+                document.body.style.setProperty('--container-bg', containerBgInput.value);
+                document.body.style.setProperty('--text-color', textColorInput.value);
+                document.body.style.setProperty('--secondary-text', secondaryTextInput.value);
+                document.body.style.setProperty('--tertiary-text', adjustColor(secondaryTextInput.value, contrast));
+                document.body.style.setProperty('--border-color', borderColorInput.value);
+                document.body.style.setProperty('--rebirth-color', rebirthColorInput.value);
+                document.body.style.setProperty('--rebirth-hover', adjustColor(rebirthColorInput.value, 0.9));
+                document.body.style.setProperty('--shadow-color', `rgba(0, 0, 0, ${parseInt(shadowOpacityInput.value)/100})`);
+                
+                currentTheme = 'custom';
+                if (cookiesAccepted) {
+                    setCookie('theme', 'custom', 365);
+                }
+            }
+
+            // Helper function to adjust color brightness
+            function adjustColor(color, factor) {
+                // Convert hex to RGB
+                let r = parseInt(color.substring(1, 3), 16);
+                let g = parseInt(color.substring(3, 5), 16);
+                let b = parseInt(color.substring(5, 7), 16);
+                
+                // Adjust brightness
+                r = Math.min(255, Math.max(0, Math.floor(r * factor)));
+                g = Math.min(255, Math.max(0, Math.floor(g * factor)));
+                b = Math.min(255, Math.max(0, Math.floor(b * factor)));
+                
+                // Convert back to hex
+                return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+            }
+
+            // Function to set the theme
+            function setTheme(theme) {
+                document.body.classList.remove('dark-mode', 'rainbow-light-mode', 'rainbow-dark-mode', 'custom-theme');
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                } else if (theme === 'rainbow-light') {
+                    document.body.classList.add('rainbow-light-mode');
+                } else if (theme === 'rainbow-dark') {
+                    document.body.classList.add('rainbow-dark-mode');
+                } else if (theme === 'custom') {
+                    document.body.classList.add('custom-theme');
+                    // Apply saved custom theme
+                    const savedCustomTheme = getCookie('customTheme');
+                    if (savedCustomTheme) {
+                        const theme = JSON.parse(savedCustomTheme);
+                        bgColorInput.value = theme.bgColor || '#f5f5f5';
+                        containerBgInput.value = theme.containerBg || '#ffffff';
+                        textColorInput.value = theme.textColor || '#333333';
+                        secondaryTextInput.value = theme.secondaryText || '#666666';
+                        borderColorInput.value = theme.borderColor || '#e0e0e0';
+                        rebirthColorInput.value = theme.rebirthColor || '#673AB7';
+                        shadowOpacityInput.value = theme.shadowOpacity || 10;
+                        contrastInput.value = theme.contrast || 100;
+                        
+                        applyCustomTheme();
+                    }
+                }
+                currentTheme = theme;
+                if (cookiesAccepted) {
+                    setCookie('theme', theme, 365);
+                }
+            }
+
+            // Accept cookies button click handler
+            acceptCookiesButton.addEventListener('click', function() {
+                cookiesAccepted = true;
+                setCookie('cookiesAccepted', 'true', 365);
+                setCookie('theme', currentTheme, 365);
+                cookieConsentElement.style.display = 'none';
+                saveGameData();
+                saveMessageElement.textContent = 'Cookies accepted! Your progress will be saved automatically.';
+            });
+
+            // Cookie utility functions
+            function setCookie(name, value, days) {
+                let expires = '';
+                if (days) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = '; expires=' + date.toUTCString();
+                }
+                document.cookie = name + '=' + (value || '') + expires + '; path=/';
+            }
+
+            function getCookie(name) {
+                const nameEQ = name + '=';
+                const ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            }
+
+            // Function to save game data to cookies
+            function saveGameData() {
+                if (!cookiesAccepted) return;
+
+                const now = new Date().toLocaleString();
+
+                setCookie('clickerCount', count.toString(), 365);
+                setCookie('clickerMultiplier', multiplier.toString(), 365);
+                setCookie('clickerUpgradeCost', upgradeCost.toString(), 365);
+                setCookie('clickerRebirthLevel', rebirthLevel.toString(), 365);
+                setCookie('clickerRebirthCost', rebirthCost.toString(), 365);
+                setCookie('clickerAutoClickerEnabled', autoClickerEnabled.toString(), 365);
+                setCookie('quantumLeapCooldownEnd', quantumLeapCooldownEnd.toString(), 365);
+                setCookie('quantumGardenPlanted', quantumGardenPlanted.toString(), 365);
+                setCookie('clickerLastSaved', now, 365);
+
+                // Save new shop item states
+                setCookie('cosmicHarvesterActive', cosmicHarvesterActive.toString(), 365);
+                setCookie('cosmicHarvesterCooldownEnd', cosmicHarvesterCooldownEnd.toString(), 365);
+                setCookie('timeFractureActive', timeFractureActive.toString(), 365);
+                setCookie('timeFractureCooldownEnd', timeFractureCooldownEnd.toString(), 365);
+                setCookie('dimensionalPortalOpen', dimensionalPortalOpen.toString(), 365);
+                setCookie('realityWarped', realityWarped.toString(), 365);
+                setCookie('quantumSingularityCreated', quantumSingularityCreated.toString(), 365);
+                setCookie('infinityEngineActive', infinityEngineActive.toString(), 365);
+                setCookie('voidExtractorActive', voidExtractorActive.toString(), 365);
+                setCookie('celestialForgeActive', celestialForgeActive.toString(), 365);
+                setCookie('eternityCoreActive', eternityCoreActive.toString(), 365);
+                setCookie('omnipotentAscensionAchieved', omnipotentAscensionAchieved.toString(), 365);
+
+                saveMessageElement.textContent = `Progress saved (Last: ${now})`;
+            }
+
+            // Function to load game data from cookies
+            function loadGameData() {
+                const savedCount = getCookie('clickerCount');
+                const savedMultiplier = getCookie('clickerMultiplier');
+                const savedUpgradeCost = getCookie('clickerUpgradeCost');
+                const savedRebirthLevel = getCookie('clickerRebirthLevel');
+                const savedRebirthCost = getCookie('clickerRebirthCost');
+                const savedAutoClickerEnabled = getCookie('clickerAutoClickerEnabled');
+                const savedQuantumLeapCooldownEnd = getCookie('quantumLeapCooldownEnd');
+                const savedQuantumGardenPlanted = getCookie('quantumGardenPlanted');
+                const lastSaved = getCookie('clickerLastSaved');
+
+                // Load new shop item states
+                const savedCosmicHarvesterActive = getCookie('cosmicHarvesterActive');
+                const savedCosmicHarvesterCooldownEnd = getCookie('cosmicHarvesterCooldownEnd');
+                const savedTimeFractureActive = getCookie('timeFractureActive');
+                const savedTimeFractureCooldownEnd = getCookie('timeFractureCooldownEnd');
+                const savedDimensionalPortalOpen = getCookie('dimensionalPortalOpen');
+                const savedRealityWarped = getCookie('realityWarped');
+                const savedQuantumSingularityCreated = getCookie('quantumSingularityCreated');
+                const savedInfinityEngineActive = getCookie('infinityEngineActive');
+                const savedVoidExtractorActive = getCookie('voidExtractorActive');
+                const savedCelestialForgeActive = getCookie('celestialForgeActive');
+                const savedEternityCoreActive = getCookie('eternityCoreActive');
+                const savedOmnipotentAscensionAchieved = getCookie('omnipotentAscensionAchieved');
+
+                if (savedCount !== null && savedMultiplier !== null && savedUpgradeCost !== null) {
+                    count = parseInt(savedCount, 10);
+                    multiplier = parseInt(savedMultiplier, 10);
+                    upgradeCost = parseInt(savedUpgradeCost, 10);
+
+                    if (savedRebirthLevel !== null) {
+                        rebirthLevel = parseInt(savedRebirthLevel, 10);
+                    }
+
+                    if (savedRebirthCost !== null) {
+                        rebirthCost = parseInt(savedRebirthCost, 10);
+                    }
+
+                    if (savedAutoClickerEnabled !== null) {
+                        autoClickerEnabled = savedAutoClickerEnabled === 'true';
+                    }
+
+                    if (savedQuantumLeapCooldownEnd !== null) {
+                        quantumLeapCooldownEnd = parseInt(savedQuantumLeapCooldownEnd, 10);
+                        if (quantumLeapCooldownEnd > Date.now()) {
+                            quantumLeapCooldown = true;
+                            startQuantumLeapCooldownTimer();
+                        }
+                    }
+
+                    if (savedQuantumGardenPlanted !== null) {
+                        quantumGardenPlanted = savedQuantumGardenPlanted === 'true';
+                        if (quantumGardenPlanted) {
+                            startQuantumGarden();
+                        }
+                    }
+
+                    // Load new shop item states
+                    if (savedCosmicHarvesterActive !== null) {
+                        cosmicHarvesterActive = savedCosmicHarvesterActive === 'true';
+                        if (cosmicHarvesterActive) {
+                            startCosmicHarvester();
+                        }
+                    }
+
+                    if (savedCosmicHarvesterCooldownEnd !== null) {
+                        cosmicHarvesterCooldownEnd = parseInt(savedCosmicHarvesterCooldownEnd, 10);
+                        if (cosmicHarvesterCooldownEnd > Date.now()) {
+                            cosmicHarvesterCooldown = true;
+                            startCosmicHarvesterCooldownTimer();
+                        }
+                    }
+
+                    if (savedTimeFractureActive !== null) {
+                        timeFractureActive = savedTimeFractureActive === 'true';
+                        if (timeFractureActive) {
+                            startTimeFracture();
+                        }
+                    }
+
+                    if (savedTimeFractureCooldownEnd !== null) {
+                        timeFractureCooldownEnd = parseInt(savedTimeFractureCooldownEnd, 10);
+                        if (timeFractureCooldownEnd > Date.now()) {
+                            timeFractureCooldown = true;
+                            startTimeFractureCooldownTimer();
+                        }
+                    }
+
+                    if (savedDimensionalPortalOpen !== null) {
+                        dimensionalPortalOpen = savedDimensionalPortalOpen === 'true';
+                    }
+
+                    if (savedRealityWarped !== null) {
+                        realityWarped = savedRealityWarped === 'true';
+                    }
+
+                    if (savedQuantumSingularityCreated !== null) {
+                        quantumSingularityCreated = savedQuantumSingularityCreated === 'true';
+                        if (quantumSingularityCreated) {
+                            startQuantumSingularity();
+                        }
+                    }
+
+                    if (savedInfinityEngineActive !== null) {
+                        infinityEngineActive = savedInfinityEngineActive === 'true';
+                        if (infinityEngineActive) {
+                            startInfinityEngine();
+                        }
+                    }
+
+                    if (savedVoidExtractorActive !== null) {
+                        voidExtractorActive = savedVoidExtractorActive === 'true';
+                        if (voidExtractorActive) {
+                            startVoidExtractor();
+                        }
+                    }
+
+                    if (savedCelestialForgeActive !== null) {
+                        celestialForgeActive = savedCelestialForgeActive === 'true';
+                        if (celestialForgeActive) {
+                            startCelestialForge();
+                        }
+                    }
+
+                    if (savedEternityCoreActive !== null) {
+                        eternityCoreActive = savedEternityCoreActive === 'true';
+                        if (eternityCoreActive) {
+                            startEternityCore();
+                        }
+                    }
+
+                    if (savedOmnipotentAscensionAchieved !== null) {
+                        omnipotentAscensionAchieved = savedOmnipotentAscensionAchieved === 'true';
+                    }
+
+                    if (lastSaved) {
+                        saveMessageElement.textContent = `Progress loaded (Last saved: ${lastSaved})`;
+                    } else {
+                        saveMessageElement.textContent = 'Progress loaded successfully';
+                    }
+                }
+
+                updateCounter(false);
+            }
+
+            // Function to format large numbers with suffixes
+            function formatNumber(num) {
+                const thresholds = [
+                    { value: 1, suffix: '' },
+                    { value: 1e3, suffix: 'k' },
+                    { value: 1e6, suffix: 'M' },
+                    { value: 1e9, suffix: 'B' },
+                    { value: 1e12, suffix: 'T' },
+                    { value: 1e15, suffix: 'Qd' },
+                    { value: 1e18, suffix: 'Qt' },
+                    { value: 1e21, suffix: 'Sx' },
+                    { value: 1e24, suffix: 'Sp' },
+                    { value: 1e27, suffix: 'Oc' },
+                    { value: 1e30, suffix: 'No' },
+                    { value: 1e33, suffix: 'Dc' },
+                    { value: 1e36, suffix: 'Ud' },
+                    { value: 1e39, suffix: 'Dd' },
+                    { value: 1e42, suffix: 'Td' },
+                    { value: 1e45, suffix: 'Qad' },
+                    { value: 1e48, suffix: 'Qid' },
+                    { value: 1e51, suffix: 'Sxd' },
+                    { value: 1e54, suffix: 'Spd' },
+                    { value: 1e57, suffix: 'Od' },
+                    { value: 1e60, suffix: 'Nd' },
+                    { value: 1e63, suffix: 'Vg' },
+                    { value: 1e66, suffix: 'Uvg' },
+                    { value: 1e69, suffix: 'Dvg' },
+                    { value: 1e72, suffix: 'Tvg' },
+                    { value: 1e75, suffix: 'Qavg' },
+                    { value: 1e78, suffix: 'Qivg' },
+                    { value: 1e81, suffix: 'Sxvg' },
+                    { value: 1e84, suffix: 'Spvg' },
+                    { value: 1e87, suffix: 'Ovg' },
+                    { value: 1e90, suffix: 'Nvg' },
+                    { value: 1e93, suffix: 'Tg' },
+                    { value: 1e96, suffix: 'Utg' },
+                    { value: 1e99, suffix: 'Dtg' },
+                    { value: 1e102, suffix: 'Ttg' },
+                    { value: 1e105, suffix: 'Qatg' },
+                    { value: 1e108, suffix: 'Qitg' },
+                    { value: 1e111, suffix: 'Sxtg' },
+                    { value: 1e114, suffix: 'Sptg' },
+                    { value: 1e117, suffix: 'Otg' },
+                    { value: 1e120, suffix: 'Ntg' },
+                    { value: 1e123, suffix: 'Qag' },
+                    { value: 1e126, suffix: 'Uqag' },
+                    { value: 1e129, suffix: 'Dqag' },
+                    { value: 1e132, suffix: 'Tqag' },
+                    { value: 1e135, suffix: 'Qaqag' },
+                    { value: 1e138, suffix: 'Qiqag' },
+                    { value: 1e141, suffix: 'Sxqag' },
+                    { value: 1e144, suffix: 'Spqag' },
+                    { value: 1e147, suffix: 'Oqag' },
+                    { value: 1e150, suffix: 'Nqag' },
+                    { value: 1e153, suffix: 'Qig' },
+                    { value: 1e156, suffix: 'Uqig' },
+                    { value: 1e159, suffix: 'Dqig' },
+                    { value: 1e162, suffix: 'Tqig' },
+                    { value: 1e165, suffix: 'Qaqig' },
+                    { value: 1e168, suffix: 'Qiqig' },
+                    { value: 1e171, suffix: 'Sxqig' },
+                    { value: 1e174, suffix: 'Spqig' },
+                    { value: 1e177, suffix: 'Oqig' },
+                    { value: 1e180, suffix: 'Nqig' },
+                    { value: 1e183, suffix: 'Sxg' },
+                    { value: 1e186, suffix: 'Usxg' },
+                    { value: 1e189, suffix: 'Dsxg' },
+                    { value: 1e192, suffix: 'Tsxg' },
+                    { value: 1e195, suffix: 'Qasxg' },
+                    { value: 1e198, suffix: 'Qisxg' },
+                    { value: 1e201, suffix: 'Sxsxg' },
+                    { value: 1e204, suffix: 'Spsxg' },
+                    { value: 1e207, suffix: 'Osxg' },
+                    { value: 1e210, suffix: 'Nsxg' },
+                    { value: 1e213, suffix: 'Spg' },
+                    { value: 1e216, suffix: 'Uspg' },
+                    { value: 1e219, suffix: 'Dspg' },
+                    { value: 1e222, suffix: 'Tspg' },
+                    { value: 1e225, suffix: 'Qaspg' },
+                    { value: 1e228, suffix: 'Qispg' },
+                    { value: 1e231, suffix: 'Sxspg' },
+                    { value: 1e234, suffix: 'Spspg' },
+                    { value: 1e237, suffix: 'Ospg' },
+                    { value: 1e240, suffix: 'Nspg' },
+                    { value: 1e243, suffix: 'Og' },
+                    { value: 1e246, suffix: 'Uog' },
+                    { value: 1e249, suffix: 'Dog' },
+                    { value: 1e252, suffix: 'Tog' },
+                    { value: 1e255, suffix: 'Qaog' },
+                    { value: 1e258, suffix: 'Qiog' },
+                    { value: 1e261, suffix: 'Sxog' },
+                    { value: 1e264, suffix: 'Spog' },
+                    { value: 1e267, suffix: 'Oog' },
+                    { value: 1e270, suffix: 'Nog' },
+                    { value: 1e273, suffix: 'Ng' },
+                    { value: 1e276, suffix: 'Ung' },
+                    { value: 1e279, suffix: 'Dng' },
+                    { value: 1e282, suffix: 'Tng' },
+                    { value: 1e285, suffix: 'Qang' },
+                    { value: 1e288, suffix: 'Qing' },
+                    { value: 1e291, suffix: 'Sxng' },
+                    { value: 1e294, suffix: 'Spng' },
+                    { value: 1e297, suffix: 'Ong' },
+                    { value: 1e300, suffix: 'Nng' },
+                    { value: 1e303, suffix: 'inf' },
+                    { value: 1e306, suffix: 'rayos' },
+                    { value: 1e309, suffix: ' - UNDEFINED' }
+                ];
+
+                let i = thresholds.length - 1;
+                while (i > 0 && num < thresholds[i].value) {
+                    i--;
+                }
+
+                const { value, suffix } = thresholds[i];
+
+                if (value === 1) {
+                    return num.toString();
+                } else if (num < value * 10) {
+                    return (num / value).toFixed(1) + suffix;
+                } else {
+                    return Math.floor(num / value) + suffix;
+                }
+            }
+
+            // Function to update the counter display
+            function updateCounter(saveData = true) {
+                counterElement.textContent = formatNumber(count);
+                upgradeButton.disabled = count < upgradeCost || upgradeCooldownActive;
+                rebirthButton.disabled = count < rebirthCost;
+                autoClickerButton.disabled = autoClickerEnabled;
+                disableAutoClickerButton.disabled = !autoClickerEnabled;
+                rebirthButton.textContent = `Rebirth: ${formatNumber(rebirthCost)} points`;
+                multiplierElement.textContent = formatNumber(multiplier);
+                rebirthLevelElement.textContent = rebirthLevel;
+                rebirthBonusElement.textContent = rebirthLevel * 10;
+                upgradeCostElement.textContent = formatNumber(upgradeCost);
+                upgradeButton.textContent = `Buy Multiplier: ${formatNumber(upgradeCost)} points`;
+
+                // Show/hide auto-clicker item based on rebirth level
+                if (rebirthLevel >= 1) {
+                    autoClickerItem.style.display = 'block';
+                } else {
+                    autoClickerItem.style.display = 'none';
+                }
+
+                // Show/hide Time Warp item based on rebirth level
+                if (rebirthLevel >= 2) {
+                    timeWarpItem.style.display = 'block';
+                } else {
+                    timeWarpItem.style.display = 'none';
+                }
+
+                // Show/hide Quantum Leap item based on rebirth level
+                if (rebirthLevel >= 3) {
+                    quantumLeapItem.style.display = 'block';
+                } else {
+                    quantumLeapItem.style.display = 'none';
+                }
+
+                // Show/hide Quantum Garden item based on rebirth level
+                if (rebirthLevel >= 4) {
+                    quantumGardenItem.style.display = 'block';
+                } else {
+                    quantumGardenItem.style.display = 'none';
+                }
+
+                // Show/hide Cosmic Harvester item based on rebirth level
+                if (rebirthLevel >= 5) {
+                    cosmicHarvesterItem.style.display = 'block';
+                } else {
+                    cosmicHarvesterItem.style.display = 'none';
+                }
+
+                // Show/hide Time Fracture item based on rebirth level
+                if (rebirthLevel >= 6) {
+                    timeFractureItem.style.display = 'block';
+                } else {
+                    timeFractureItem.style.display = 'none';
+                }
+
+                // Show/hide Dimensional Portal item based on rebirth level
+                if (rebirthLevel >= 7) {
+                    dimensionalPortalItem.style.display = 'block';
+                } else {
+                    dimensionalPortalItem.style.display = 'none';
+                }
+
+                // Show/hide Reality Warper item based on rebirth level
+                if (rebirthLevel >= 8) {
+                    realityWarperItem.style.display = 'block';
+                } else {
+                    realityWarperItem.style.display = 'none';
+                }
+
+                // Show/hide Quantum Singularity item based on rebirth level
+                if (rebirthLevel >= 9) {
+                    quantumSingularityItem.style.display = 'block';
+                } else {
+                    quantumSingularityItem.style.display = 'none';
+                }
+
+                // Show/hide Infinity Engine item based on rebirth level
+                if (rebirthLevel >= 10) {
+                    infinityEngineItem.style.display = 'block';
+                } else {
+                    infinityEngineItem.style.display = 'none';
+                }
+
+                // Show/hide Void Extractor item based on rebirth level
+                if (rebirthLevel >= 11) {
+                    voidExtractorItem.style.display = 'block';
+                } else {
+                    voidExtractorItem.style.display = 'none';
+                }
+
+                // Show/hide Celestial Forge item based on rebirth level
+                if (rebirthLevel >= 12) {
+                    celestialForgeItem.style.display = 'block';
+                } else {
+                    celestialForgeItem.style.display = 'none';
+                }
+
+                // Show/hide Eternity Core item based on rebirth level
+                if (rebirthLevel >= 13) {
+                    eternityCoreItem.style.display = 'block';
+                } else {
+                    eternityCoreItem.style.display = 'none';
+                }
+
+                // Show/hide Omnipotent Ascension item based on rebirth level
+                if (rebirthLevel >= 14) {
+                    omnipotentAscensionItem.style.display = 'block';
+                } else {
+                    omnipotentAscensionItem.style.display = 'none';
+                }
+
+                // Update status displays
+                cosmicHarvesterStatus.textContent = cosmicHarvesterActive ? "Harvesting cosmic energy!" : "Not active";
+                timeFractureStatus.textContent = timeFractureActive ? "Time is fractured!" : "Time is normal";
+                dimensionalPortalStatus.textContent = dimensionalPortalOpen ? "Portal open to another dimension!" : "Portal closed";
+                realityWarperStatus.textContent = realityWarped ? "Reality is warped!" : "Reality stable";
+                quantumSingularityStatus.textContent = quantumSingularityCreated ? "Singularity active!" : "No singularity";
+                infinityEngineStatus.textContent = infinityEngineActive ? "Engine online!" : "Engine offline";
+                voidExtractorStatus.textContent = voidExtractorActive ? "Extracting void energy!" : "Not extracting";
+                celestialForgeStatus.textContent = celestialForgeActive ? "Forge active!" : "Forge inactive";
+                eternityCoreStatus.textContent = eternityCoreActive ? "Core powered!" : "Core dormant";
+                omnipotentAscensionStatus.textContent = omnipotentAscensionAchieved ? "OMNIPOTENT!" : "Mortal form";
+
+                if (saveData) {
+                    saveGameData();
+                }
+            }
+
+            // Function to increment counter with rate limiting
+            function incrementCounter() {
+                if (isBlacklisted || checkBlacklist()) {
+                    return;
+                }
+
+                if (isShopOpen) return;
+
+                const now = Date.now();
+
+                // Track clicks for rate limiting
+                clickHistory.push(now);
+                
+                // Remove clicks older than 1 second
+                while (clickHistory.length > 0 && now - clickHistory[0] > 1000) {
+                    clickHistory.shift();
+                }
+                
+                // Check if user has exceeded 20 clicks in the last second
+                if (clickHistory.length > 20) {
+                    isBlacklisted = true;
+                    redirectToBlacklist();
+                    return;
+                }
+
+                if (isClickOnCooldown && now - lastClickTime < clickCooldown) {
+                    const remainingTime = ((clickCooldown - (now - lastClickTime)) / 1000).toFixed(1);
+                    rateLimitInfoElement.textContent = `Wait ${remainingTime}s`;
+                    return;
+                }
+
+                // Calculate base points
+                const rebirthBonus = 1 + (rebirthLevel * 0.1);
+                const timeWarpBonus = timeWarpActive ? 5 : 1;
+                let points = Math.floor(multiplier * rebirthBonus * timeWarpBonus);
+
+                // Apply bonuses from new shop items
+                if (cosmicHarvesterActive) points *= 2;
+                if (timeFractureActive) points *= 3;
+                if (dimensionalPortalOpen) points *= 1.5;
+                if (realityWarped) points *= 4;
+                if (quantumSingularityCreated) points *= 2;
+                if (infinityEngineActive) points *= 5;
+                if (voidExtractorActive) points *= 1.5;
+                if (celestialForgeActive) points *= 2;
+                if (eternityCoreActive) points *= 3;
+                if (omnipotentAscensionAchieved) points *= 10;
+
+                count += Math.floor(points);
+                lastClickTime = now;
+
+                setTimeout(() => {
+                    rateLimitInfoElement.textContent = '';
+                }, clickCooldown);
+
+                updateCounter();
+
+                enterButton.classList.add('active');
+                setTimeout(() => {
+                    enterButton.classList.remove('active');
+                }, 100);
+            }
+
+            // Listen for keydown events
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && !isShopOpen) {
+                    incrementCounter();
+                }
+            });
+
+            // Enter button click
+            enterButton.addEventListener('click', incrementCounter);
+
+            // Upgrade button functionality with cooldown
+            upgradeButton.addEventListener('click', function() {
+                if (count >= upgradeCost && !upgradeCooldownActive) {
+                    count -= upgradeCost;
+                    multiplier *= 2;
+                    upgradeCost *= 2;
+                    upgradeCooldownActive = true;
+                    upgradeCooldownEnd = Date.now() + 5000;
+
+                    upgradeCooldownOverlay.style.display = 'flex';
+                    upgradeCooldownText.textContent = '5.0';
+
+                    const interval = setInterval(() => {
+                        const remainingTime = ((upgradeCooldownEnd - Date.now()) / 1000).toFixed(1);
+                        if (remainingTime <= 0) {
+                            clearInterval(interval);
+                            upgradeCooldownOverlay.style.display = 'none';
+                            upgradeCooldownActive = false;
+                        } else {
+                            upgradeCooldownText.textContent = remainingTime;
+                        }
+                    }, 100);
+
+                    updateCounter();
+                }
+            });
+
+            // Rebirth button functionality
+            rebirthButton.addEventListener('click', function() {
+                if (count >= rebirthCost) {
+                    if (confirm(`Are you sure you want to rebirth? You will lose all your points (${formatNumber(count)}) and multipliers, but gain a permanent +10% bonus per click!`)) {
+                        rebirthLevel++;
+                        count = 0;
+                        multiplier = 1;
+                        upgradeCost = 10;
+                        rebirthCost *= 10;
+                        autoClickerEnabled = false;
+                        clearInterval(autoClickerInterval);
+                        updateCounter();
+                        saveMessageElement.textContent = "Rebirth complete! Your permanent bonus is now +" + (rebirthLevel * 10) + "% per click.";
+                    }
+                }
+            });
+
+            // Auto Clicker button functionality
+            autoClickerButton.addEventListener('click', function() {
+                autoClickerEnabled = true;
+                updateCounter();
+                startAutoClicker();
+            });
+
+            // Disable Auto Clicker button functionality
+            disableAutoClickerButton.addEventListener('click', function() {
+                autoClickerEnabled = false;
+                clearInterval(autoClickerInterval);
+                updateCounter();
+            });
+
+            // Function to start the auto clicker
+            function startAutoClicker() {
+                if (autoClickerEnabled && !isShopOpen) {
+                    autoClickerInterval = setInterval(incrementCounter, clickCooldown);
+                }
+            }
+
+            // Time Warp button functionality
+            timeWarpButton.addEventListener('click', function() {
+                if (!timeWarpCooldown) {
+                    timeWarpActive = true;
+                    timeWarpCooldown = true;
+                    timeWarpCooldownEnd = Date.now() + 600000;
+
+                    setTimeout(() => {
+                        timeWarpActive = false;
+                    }, 5000);
+
+                    setTimeout(() => {
+                        timeWarpCooldown = false;
+                        timeWarpCooldownOverlay.style.display = 'none';
+                    }, 600000);
+
+                    timeWarpCooldownOverlay.style.display = 'flex';
+                    timeWarpCooldownText.textContent = '10:00';
+                    startTimeWarpCooldownTimer();
+                }
+            });
+
+            // Function to start the Time Warp cooldown timer
+            function startTimeWarpCooldownTimer() {
+                const interval = setInterval(() => {
+                    const remainingTime = Math.ceil((timeWarpCooldownEnd - Date.now()) / 1000);
+                    if (remainingTime <= 0) {
+                        clearInterval(interval);
+                        timeWarpCooldownOverlay.style.display = 'none';
+                    } else {
+                        const minutes = Math.floor(remainingTime / 60);
+                        const seconds = remainingTime % 60;
+                        timeWarpCooldownText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                }, 1000);
+            }
+
+            // Quantum Leap button functionality
+            quantumLeapButton.addEventListener('click', function() {
+                if (!quantumLeapCooldown) {
+                    count += 1000000;
+                    quantumLeapCooldown = true;
+                    quantumLeapCooldownEnd = Date.now() + 1800000;
+
+                    quantumLeapCooldownOverlay.style.display = 'flex';
+                    quantumLeapCooldownText.textContent = '30:00';
+                    startQuantumLeapCooldownTimer();
+
+                    updateCounter();
+                }
+            });
+
+            // Function to start the Quantum Leap cooldown timer
+            function startQuantumLeapCooldownTimer() {
+                const interval = setInterval(() => {
+                    const remainingTime = Math.ceil((quantumLeapCooldownEnd - Date.now()) / 1000);
+                    if (remainingTime <= 0) {
+                        clearInterval(interval);
+                        quantumLeapCooldownOverlay.style.display = 'none';
+                        quantumLeapCooldown = false;
+                    } else {
+                        const minutes = Math.floor(remainingTime / 60);
+                        const seconds = remainingTime % 60;
+                        quantumLeapCooldownText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                }, 1000);
+            }
+
+            // Quantum Garden button functionality
+            quantumGardenButton.addEventListener('click', function() {
+                if (!quantumGardenPlanted) {
+                    quantumGardenPlanted = true;
+                    startQuantumGarden();
+                    gardenStatus.textContent = 'Quantum Garden planted! Generating points...';
+                    updateCounter();
+                }
+            });
+
+            // Function to start the Quantum Garden
+            function startQuantumGarden() {
+                if (quantumGardenPlanted) {
+                    quantumGardenInterval = setInterval(() => {
+                        const gardenPoints = Math.floor(multiplier * rebirthLevel * 10);
+                        count += gardenPoints;
+                        updateCounter();
+                    }, 5000);
+                }
+            }
+
+            // Cosmic Harvester button functionality
+            cosmicHarvesterButton.addEventListener('click', function() {
+                if (!cosmicHarvesterActive && !cosmicHarvesterCooldown) {
+                    cosmicHarvesterActive = true;
+                    cosmicHarvesterCooldown = true;
+                    cosmicHarvesterCooldownEnd = Date.now() + 300000; // 5 minutes
+
+                    setTimeout(() => {
+                        cosmicHarvesterActive = false;
+                    }, 30000); // 30 seconds active
+
+                    setTimeout(() => {
+                        cosmicHarvesterCooldown = false;
+                        cosmicHarvesterCooldownOverlay.style.display = 'none';
+                    }, 300000); // 5 minutes total
+
+                    cosmicHarvesterCooldownOverlay.style.display = 'flex';
+                    cosmicHarvesterCooldownText.textContent = '5:00';
+                    startCosmicHarvesterCooldownTimer();
+                    startCosmicHarvester();
+                    updateCounter();
+                }
+            });
+
+            // Function to start the Cosmic Harvester cooldown timer
+            function startCosmicHarvesterCooldownTimer() {
+                const interval = setInterval(() => {
+                    const remainingTime = Math.ceil((cosmicHarvesterCooldownEnd - Date.now()) / 1000);
+                    if (remainingTime <= 0) {
+                        clearInterval(interval);
+                        cosmicHarvesterCooldownOverlay.style.display = 'none';
+                    } else {
+                        const minutes = Math.floor(remainingTime / 60);
+                        const seconds = remainingTime % 60;
+                        cosmicHarvesterCooldownText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                }, 1000);
+            }
+
+            // Function to start the Cosmic Harvester
+            function startCosmicHarvester() {
+                if (cosmicHarvesterActive) {
+                    const interval = setInterval(() => {
+                        const cosmicPoints = Math.floor(multiplier * rebirthLevel * 100);
+                        count += cosmicPoints;
+                        updateCounter();
+                    }, 1000);
+
+                    setTimeout(() => {
+                        clearInterval(interval);
+                    }, 30000); // 30 seconds
+                }
+            }
+
+            // Time Fracture button functionality
+            timeFractureButton.addEventListener('click', function() {
+                if (!timeFractureActive && !timeFractureCooldown) {
+                    timeFractureActive = true;
+                    timeFractureCooldown = true;
+                    timeFractureCooldownEnd = Date.now() + 900000; // 15 minutes
+
+                    setTimeout(() => {
+                        timeFractureActive = false;
+                    }, 60000); // 1 minute active
+
+                    setTimeout(() => {
+                        timeFractureCooldown = false;
+                        timeFractureCooldownOverlay.style.display = 'none';
+                    }, 900000); // 15 minutes total
+
+                    timeFractureCooldownOverlay.style.display = 'flex';
+                    timeFractureCooldownText.textContent = '15:00';
+                    startTimeFractureCooldownTimer();
+                    startTimeFracture();
+                    updateCounter();
+                }
+            });
+
+            // Function to start the Time Fracture cooldown timer
+            function startTimeFractureCooldownTimer() {
+                const interval = setInterval(() => {
+                    const remainingTime = Math.ceil((timeFractureCooldownEnd - Date.now()) / 1000);
+                    if (remainingTime <= 0) {
+                        clearInterval(interval);
+                        timeFractureCooldownOverlay.style.display = 'none';
+                    } else {
+                        const minutes = Math.floor(remainingTime / 60);
+                        const seconds = remainingTime % 60;
+                        timeFractureCooldownText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                }, 1000);
+            }
+
+            // Function to start the Time Fracture
+            function startTimeFracture() {
+                if (timeFractureActive) {
+                    // Change the click cooldown to be faster
+                    const originalClickCooldown = clickCooldown;
+                    clickCooldown = 50; // Much faster clicks during time fracture
+
+                    setTimeout(() => {
+                        clickCooldown = originalClickCooldown;
+                    }, 60000); // 1 minute
+                }
+            }
+
+            // Dimensional Portal button functionality
+            dimensionalPortalButton.addEventListener('click', function() {
+                dimensionalPortalOpen = !dimensionalPortalOpen;
+                updateCounter();
+            });
+
+            // Reality Warper button functionality
+            realityWarperButton.addEventListener('click', function() {
+                realityWarped = !realityWarped;
+                updateCounter();
+            });
+
+            // Quantum Singularity button functionality
+            quantumSingularityButton.addEventListener('click', function() {
+                quantumSingularityCreated = !quantumSingularityCreated;
+                if (quantumSingularityCreated) {
+                    startQuantumSingularity();
+                }
+                updateCounter();
+            });
+
+            // Function to start the Quantum Singularity
+            function startQuantumSingularity() {
+                if (quantumSingularityCreated) {
+                    const interval = setInterval(() => {
+                        const singularityPoints = Math.floor(multiplier * rebirthLevel * 1000);
+                        count += singularityPoints;
+                        updateCounter();
+                    }, 3000);
+
+                    // Store the interval so we can clear it later if needed
+                    window.quantumSingularityInterval = interval;
+                } else if (window.quantumSingularityInterval) {
+                    clearInterval(window.quantumSingularityInterval);
+                }
+            }
+
+            // Infinity Engine button functionality
+            infinityEngineButton.addEventListener('click', function() {
+                infinityEngineActive = !infinityEngineActive;
+                if (infinityEngineActive) {
+                    startInfinityEngine();
+                }
+                updateCounter();
+            });
+
+            // Function to start the Infinity Engine
+            function startInfinityEngine() {
+                if (infinityEngineActive) {
+                    const interval = setInterval(() => {
+                        const enginePoints = Math.floor(multiplier * rebirthLevel * 5000);
+                        count += enginePoints;
+                        updateCounter();
+                    }, 5000);
+
+                    // Store the interval so we can clear it later if needed
+                    window.infinityEngineInterval = interval;
+                } else if (window.infinityEngineInterval) {
+                    clearInterval(window.infinityEngineInterval);
+                }
+            }
+
+            // Void Extractor button functionality
+            voidExtractorButton.addEventListener('click', function() {
+                voidExtractorActive = !voidExtractorActive;
+                if (voidExtractorActive) {
+                    startVoidExtractor();
+                }
+                updateCounter();
+            });
+
+            // Function to start the Void Extractor
+            function startVoidExtractor() {
+                if (voidExtractorActive) {
+                    const interval = setInterval(() => {
+                        const voidPoints = Math.floor(multiplier * rebirthLevel * 2000);
+                        count += voidPoints;
+                        updateCounter();
+                    }, 2000);
+
+                    // Store the interval so we can clear it later if needed
+                    window.voidExtractorInterval = interval;
+                } else if (window.voidExtractorInterval) {
+                    clearInterval(window.voidExtractorInterval);
+                }
+            }
+
+            // Celestial Forge button functionality
+            celestialForgeButton.addEventListener('click', function() {
+                celestialForgeActive = !celestialForgeActive;
+                if (celestialForgeActive) {
+                    startCelestialForge();
+                }
+                updateCounter();
+            });
+
+            // Function to start the Celestial Forge
+            function startCelestialForge() {
+                if (celestialForgeActive) {
+                    const interval = setInterval(() => {
+                        const forgePoints = Math.floor(multiplier * rebirthLevel * 3000);
+                        count += forgePoints;
+                        updateCounter();
+                    }, 3000);
+
+                    // Store the interval so we can clear it later if needed
+                    window.celestialForgeInterval = interval;
+                } else if (window.celestialForgeInterval) {
+                    clearInterval(window.celestialForgeInterval);
+                }
+            }
+
+            // Eternity Core button functionality
+            eternityCoreButton.addEventListener('click', function() {
+                eternityCoreActive = !eternityCoreActive;
+                if (eternityCoreActive) {
+                    startEternityCore();
+                }
+                updateCounter();
+            });
+
+            // Function to start the Eternity Core
+            function startEternityCore() {
+                if (eternityCoreActive) {
+                    const interval = setInterval(() => {
+                        const corePoints = Math.floor(multiplier * rebirthLevel * 10000);
+                        count += corePoints;
+                        updateCounter();
+                    }, 10000);
+
+                    // Store the interval so we can clear it later if needed
+                    window.eternityCoreInterval = interval;
+                } else if (window.eternityCoreInterval) {
+                    clearInterval(window.eternityCoreInterval);
+                }
+            }
+
+            // Omnipotent Ascension button functionality
+            omnipotentAscensionButton.addEventListener('click', function() {
+                if (confirm("Are you sure you want to ascend to omnipotence? This will reset all your progress but grant you ultimate power!")) {
+                    omnipotentAscensionAchieved = true;
+                    rebirthLevel = 0;
+                    count = 0;
+                    multiplier = 1000000; // Massive multiplier
+                    upgradeCost = 1000000000;
+                    rebirthCost = 1000000000000;
+                    autoClickerEnabled = false;
+                    clearInterval(autoClickerInterval);
+                    quantumGardenPlanted = false;
+                    clearInterval(quantumGardenInterval);
+                    cosmicHarvesterActive = false;
+                    timeFractureActive = false;
+                    dimensionalPortalOpen = false;
+                    realityWarped = false;
+                    quantumSingularityCreated = false;
+                    infinityEngineActive = false;
+                    voidExtractorActive = false;
+                    celestialForgeActive = false;
+                    eternityCoreActive = false;
+                    
+                    updateCounter();
+                    saveMessageElement.textContent = "You have ascended to omnipotence! The universe is yours to command.";
+                }
+            });
+
+            // Reset button functionality
+            resetButton.addEventListener('click', function() {
+                if (confirm("Are you sure you want to reset your game progress? This will reset EVERYTHING including rebirth levels!")) {
+                    count = 0;
+                    multiplier = 1;
+                    upgradeCost = 10;
+                    rebirthLevel = 0;
+                    rebirthCost = 1000;
+                    autoClickerEnabled = false;
+                    clearInterval(autoClickerInterval);
+                    quantumGardenPlanted = false;
+                    clearInterval(quantumGardenInterval);
+                    cosmicHarvesterActive = false;
+                    timeFractureActive = false;
+                    dimensionalPortalOpen = false;
+                    realityWarped = false;
+                    quantumSingularityCreated = false;
+                    infinityEngineActive = false;
+                    voidExtractorActive = false;
+                    celestialForgeActive = false;
+                    eternityCoreActive = false;
+                    omnipotentAscensionAchieved = false;
+                    
+                    updateCounter();
+                    saveMessageElement.textContent = cookiesAccepted ? 
+                        "Game reset. Progress saved automatically" : 
+                        "Game reset. Accept cookies to save progress";
+                }
+            });
+
+            // Prevent scrolling
+            document.body.addEventListener('wheel', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+
+            // Prevent touchmove scrolling on mobile
+            document.body.addEventListener('touchmove', function(e) {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            // Save game data every 30 seconds as a backup
+            setInterval(saveGameData, 30000);
+
+            // Save game data when tab/window is closed
+            window.addEventListener('beforeunload', saveGameData);
+
+            // Initial update
+            updateCounter(false);
+
+            // Shop button and menu functionality
+            shopButton.addEventListener('click', function() {
+                isShopOpen = true;
+                shopMenu.classList.add('open');
+                blurOverlay.classList.add('active');
+            
+                if (autoClickerEnabled) {
+                    clearInterval(autoClickerInterval);
+                }
+            });
+
+            closeShopMenu.addEventListener('click', function() {
+                shopMenu.classList.remove('open');
+                blurOverlay.classList.remove('active');
+                isShopOpen = false;
+
+                if (autoClickerEnabled) {
+                    startAutoClicker();
+                }
+            });
+
+            blurOverlay.addEventListener('click', function() {
+                shopMenu.classList.remove('open');
+                blurOverlay.classList.remove('active');
+                isShopOpen = false;
+
+                if (autoClickerEnabled) {
+                    startAutoClicker();
+                }
+            });
+
+            // Admin Panel Functionality
+            const allowedIPs = ['216.121.159.114', '0.0.0.0'];
+
+            function isAllowedIP() {
+                return fetch('https://api.ipify.org?format=json')
+                    .then(response => response.json())
+                    .then(data => allowedIPs.includes(data.ip))
+                    .catch(() => false);
+            }
+
+            isAllowedIP().then(allowed => {
+                if (allowed) {
+                    adminPanelIcon.style.display = 'block';
+                }
+            });
+
+            adminPanelIcon.addEventListener('click', function() {
+                adminPanel.classList.add('open');
+                blurOverlay.classList.add('active');
+            });
+
+            closeAdminPanel.addEventListener('click', function() {
+                adminPanel.classList.remove('open');
+                blurOverlay.classList.remove('active');
+            });
+
+            setScoreButton.addEventListener('click', function() {
+                const newScore = parseInt(setScoreInput.value, 10);
+                if (!isNaN(newScore)) {
+                    count = newScore;
+                    updateCounter();
+                }
+            });
+
+            setRebirthsButton.addEventListener('click', function() {
+                const newRebirths = parseInt(setRebirthsInput.value, 10);
+                if (!isNaN(newRebirths)) {
+                    rebirthLevel = newRebirths;
+                    updateCounter();
+                }
+            });
+
+            setMultiplierButton.addEventListener('click', function() {
+                const newMultiplier = parseInt(setMultiplierInput.value, 10);
+                if (!isNaN(newMultiplier)) {
+                    multiplier = newMultiplier;
+                    updateCounter();
+                }
+            });
+
+            enableAutoClicker.addEventListener('click', function() {
+                autoClickerEnabled = true;
+                updateCounter();
+                startAutoClicker();
+            });
+
+            disableAutoClicker.addEventListener('click', function() {
+                autoClickerEnabled = false;
+                clearInterval(autoClickerInterval);
+                updateCounter();
+            });
+
+            resetGame.addEventListener('click', function() {
+                if (confirm("Are you sure you want to reset your game progress? This will reset EVERYTHING including rebirth levels!")) {
+                    count = 0;
+                    multiplier = 1;
+                    upgradeCost = 10;
+                    rebirthLevel = 0;
+                    rebirthCost = 1000;
+                    autoClickerEnabled = false;
+                    clearInterval(autoClickerInterval);
+                    quantumGardenPlanted = false;
+                    clearInterval(quantumGardenInterval);
+                    cosmicHarvesterActive = false;
+                    timeFractureActive = false;
+                    dimensionalPortalOpen = false;
+                    realityWarped = false;
+                    quantumSingularityCreated = false;
+                    infinityEngineActive = false;
+                    voidExtractorActive = false;
+                    celestialForgeActive = false;
+                    eternityCoreActive = false;
+                    omnipotentAscensionAchieved = false;
+                    
+                    updateCounter();
+                    saveMessageElement.textContent = cookiesAccepted ? 
+                        "Game reset. Progress saved automatically" : 
+                        "Game reset. Accept cookies to save progress";
+                }
+            });
+
+            enableRateLimiter.addEventListener('click', function() {
+                isClickOnCooldown = true;
+                rateLimitInfoElement.textContent = 'Rate Limiter Enabled';
+                enableRateLimiter.disabled = true;
+                disableRateLimiter.disabled = false;
+            });
+
+            disableRateLimiter.addEventListener('click', function() {
+                isClickOnCooldown = false;
+                rateLimitInfoElement.textContent = 'Rate Limiter Disabled';
+                enableRateLimiter.disabled = false;
+                disableRateLimiter.disabled = true;
+            });
+
+            enableRateLimiter.disabled = true;
+            disableRateLimiter.disabled = false;
+
+            playButton.addEventListener('click', function() {
+                welcomeOverlay.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
