@@ -71,20 +71,20 @@ export default function GameContainer({ onShowCredits, onShowPrivacy }: GameCont
                 <div className="count-container mb-2">
                   <h2 className="font-heading text-xl text-neutral-500">You have</h2>
                   <div className="inline-flex items-baseline">
-                    <span className="text-4xl font-bold text-indigo-600 mr-2">{gameState.count.toLocaleString()}</span>
+                    <span className="text-4xl font-bold text-indigo-600 mr-2">{gameState?.count ? gameState.count.toLocaleString() : 0}</span>
                     <span className="text-xl text-neutral-500">points</span>
                   </div>
                 </div>
                 <div className="count-cps flex items-center justify-center text-sm text-neutral-500">
                   <span>Points per click:</span>
                   <span className="ml-2 font-bold text-purple-600">
-                    {(gameState.pointsPerClick * gameState.pointMultiplier * (1 + gameState.rebirthBonus / 100)).toLocaleString()}
+                    {gameState?.pointsPerClick ? (gameState.pointsPerClick * gameState.pointMultiplier * (1 + gameState.rebirthBonus / 100)).toLocaleString() : '0'}
                   </span>
                 </div>
                 <div className="count-cps flex items-center justify-center text-sm text-neutral-500">
                   <span>Points per second:</span>
                   <span className="ml-2 font-bold text-purple-600">
-                    {(gameState.pointsPerSecond * gameState.pointMultiplier * (1 + gameState.rebirthBonus / 100)).toLocaleString()}
+                    {gameState?.pointsPerSecond ? (gameState.pointsPerSecond * gameState.pointMultiplier * (1 + gameState.rebirthBonus / 100)).toLocaleString() : '0'}
                   </span>
                 </div>
               </div>
@@ -98,7 +98,7 @@ export default function GameContainer({ onShowCredits, onShowPrivacy }: GameCont
                   Upgrades
                 </h2>
                 <div className="upgrade-list space-y-3 overflow-y-auto max-h-64 pr-2">
-                  {Object.values(gameState.upgrades).map((upgrade) => (
+                  {gameState?.upgrades ? Object.values(gameState.upgrades).map((upgrade) => (
                     <UpgradeItem 
                       key={upgrade.id}
                       id={upgrade.id}
@@ -106,9 +106,9 @@ export default function GameContainer({ onShowCredits, onShowPrivacy }: GameCont
                       description={upgrade.description}
                       level={upgrade.level}
                       price={upgrade.currentPrice}
-                      canAfford={gameState.count >= upgrade.currentPrice}
+                      canAfford={gameState?.count ? gameState.count >= upgrade.currentPrice : false}
                     />
-                  ))}
+                  )) : null}
                 </div>
               </div>
             </div>
